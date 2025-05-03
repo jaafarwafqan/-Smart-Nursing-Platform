@@ -2,15 +2,16 @@
 
 namespace App\Services;
 
+use App\Contracts\EventServiceInterface;
 use App\Models\Event;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
-class EventService
+class EventService implements EventServiceInterface
 {
     public function __construct(private AttachmentService $files) {}
 
-    /** إنشاء فعاليّة */
+    /** Create an event */
     public function create(array $data): Event
     {
         return DB::transaction(function () use ($data) {
@@ -23,12 +24,13 @@ class EventService
                     'path' => $this->files->store($file, 'events'),
                 ]);
             }
+
             return $event;
         });
     }
 
-    /** تحديث فعاليّة */
-    public function update(Event $event, array $data): Event
+    /** Update an event */
+    public function update(Event $event, array $data): bool
     {
         return DB::transaction(function () use ($event, $data) {
             $newFiles = Arr::pull($data, 'attachments', []);
@@ -39,16 +41,20 @@ class EventService
                     'path' => $this->files->store($file, 'events'),
                 ]);
             }
-            return $event;
+
+            return true;
         });
     }
 
-    /** حذف فعاليّة (مع ملفاتها) */
-    public function delete(Event $event): void
+    /** Delete an event (with its files) */
+    public function delete(Event $event): bool
     {
-        foreach ($event->attachments as $att) {
-            $this->files->delete($att->path);
-        }
-        $event->delete();
+        return DB::transaction(function () use ($event) {
+            foreach ($event->attachments as $att) {
+                $this->files->delete($att->path);
+            }
+
+            return $event->delete();
+        });
     }
 }

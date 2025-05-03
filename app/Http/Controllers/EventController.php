@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\EventServiceInterface;
 use App\Models\Event;
 use App\Models\Branch;
 use App\Services\EventService;
@@ -11,7 +12,7 @@ use Illuminate\View\View;
 
 class EventController extends Controller
 {
-    public function __construct(private EventService $service)
+    public function __construct(private EventServiceInterface $service)
     {
         // يفعّل صلاحيات EventPolicy لكل دالة تلقائيًا
         $this->authorizeResource(Event::class, 'event');

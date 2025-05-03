@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\ResearchServiceInterface;
+use App\Http\Requests\StoreResearchRequest;
 use App\Models\researches;
 use App\Models\Branch;
 use App\Services\ResearchService;
-use App\Http\Requests\StoreResearchRequest;
+
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class ResearchController extends Controller
 {
-    public function __construct(private ResearchService $service)
+    public function __construct(private ResearchServiceInterface $service)
     {
         $this->authorizeResource(researches::class, 'researches');
     }

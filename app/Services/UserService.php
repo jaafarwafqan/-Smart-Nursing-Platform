@@ -2,63 +2,59 @@
 
 namespace App\Services;
 
+use App\Contracts\UserServiceInterface;
 use App\Models\User;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
 
-class UserService
+class UserService implements UserServiceInterface
 {
-    /** إنشاء مستخدم جديد */
+    public function __construct(private AttachmentService $files) {}
+
+    /** Create a user */
     public function create(array $data): User
     {
         return DB::transaction(function () use ($data) {
-
-            $roles = Arr::pull($data, 'roles', []);        // [', 'employee', …]
-
-            $data['password'] = Hash::make($data['password']);
+            $attachments = Arr::pull($data, 'attachments', []);
 
             $user = User::create($data);
 
-            /* ربط الأدوار */
-            if ($roles) {
-                $roleModels = Role::whereIn('name', $roles)->get();
-                $user->syncRoles($roleModels);
+            foreach ($attachments as $file) {
+                $user->attachments()->create([
+                    'path' => $this->files->store($file, 'users'),
+                ]);
             }
 
             return $user;
         });
     }
 
-    /** تحديث بيانات مستخدم */
-    public function update(User $user, array $data): User
+    /** Update a user */
+    public function update(User $user, array $data): bool
     {
         return DB::transaction(function () use ($user, $data) {
-
-            $roles = Arr::pull($data, 'roles', null);
-
-            if (!empty($data['password'])) {
-                $data['password'] = Hash::make($data['password']);
-            } else {
-                unset($data['password']);   // لا تغيّر كلمة المرور إذا كانت فارغة
-            }
-
+            $newFiles = Arr::pull($data, 'attachments', []);
             $user->update($data);
 
-            if ($roles !== null) {
-                $roleModels = Role::whereIn('name', $roles)->get();
-                $user->syncRoles($roleModels);
+            foreach ($newFiles as $file) {
+                $user->attachments()->create([
+                    'path' => $this->files->store($file, 'users'),
+                ]);
             }
 
-            return $user;
+            return true;
         });
     }
 
-    /** حذف مستخدم */
-    public function delete(User $user): void
+    /** Delete a user (with its files) */
+    public function delete(User $user): bool
     {
-        // حماية الأدمن الرئيسي يمكن وضع منطق إضافي هنا إن أردت
-        $user->delete();
+        return DB::transaction(function () use ($user) {
+            foreach ($user->attachments as $att) {
+                $this->files->delete($att->path);
+            }
+
+            return $user->delete();
+        });
     }
 }

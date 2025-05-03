@@ -2,50 +2,40 @@
 
 namespace App\Services;
 
+use App\Contracts\CampaignServiceInterface;
 use App\Models\Campaign;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
-class CampaignService
+class CampaignService implements CampaignServiceInterface
 {
-    public function __construct(private AttachmentService $files) {}
-
     public function create(array $data): Campaign
     {
-        return DB::transaction(function () use ($data) {
-            $attachments = Arr::pull($data, 'attachments', []);
+        $files = $data['attachments'] ?? [];
+        unset($data['attachments']);
 
-            $campaign = Campaign::create($data);
+        $campaign = Campaign::create($data);
 
-            foreach ($attachments as $file) {
-                $campaign->attachments()->create([
-                    'path' => $this->files->store($file, 'campaigns'),
-                ]);
-            }
-            return $campaign;
-        });
-    }
-
-    public function update(Campaign $campaign, array $data): Campaign
-    {
-        return DB::transaction(function () use ($campaign, $data) {
-            $newFiles = Arr::pull($data, 'attachments', []);
-            $campaign->update($data);
-
-            foreach ($newFiles as $file) {
-                $campaign->attachments()->create([
-                    'path' => $this->files->store($file, 'campaigns'),
-                ]);
-            }
-            return $campaign;
-        });
-    }
-
-    public function delete(Campaign $campaign): void
-    {
-        foreach ($campaign->attachments as $att) {
-            $this->files->delete($att->path);
+        if ($files) {
+            $paths = collect($files)
+                ->map(fn($f) => $f->store('campaigns', 'public'))
+                ->toArray();
+            $campaign->update(['attachments' => $paths]);
         }
-        $campaign->delete();
+
+        return $campaign;
+    }
+
+    public function update(Campaign $campaign, array $data): bool
+    {
+        // مثال مختصر
+        return $campaign->update($data);
+    }
+
+    public function delete(Campaign $campaign): bool
+    {
+        collect($campaign->attachments ?? [])
+            ->each(fn($p) => Storage::disk('public')->delete($p));
+
+        return $campaign->delete();
     }
 }

@@ -2,48 +2,59 @@
 
 namespace App\Services;
 
+use App\Contracts\ResearchServiceInterface;
 use App\Models\researches;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
-class ResearchService
+class ResearchService implements ResearchServiceInterface
 {
     public function __construct(private AttachmentService $files) {}
 
-    public function create(array $data): researches    {
+    /** Create a research */
+    public function create(array $data): researches
+    {
         return DB::transaction(function () use ($data) {
             $attachments = Arr::pull($data, 'attachments', []);
 
-            $researches = researches::create($data);
+            $research = researches::create($data);
 
             foreach ($attachments as $file) {
-                $researches->attachments()->create([
+                $research->attachments()->create([
                     'path' => $this->files->store($file, 'researches'),
                 ]);
             }
-            return $researches;
+
+            return $research;
         });
     }
 
-    public function update(researches $researches, array $data): researches    {
-        return DB::transaction(function () use ($researches, $data) {
+    /** Update a research */
+    public function update(researches $research, array $data): bool
+    {
+        return DB::transaction(function () use ($research, $data) {
             $newFiles = Arr::pull($data, 'attachments', []);
-            $researches->update($data);
+            $research->update($data);
 
             foreach ($newFiles as $file) {
-                $researches->attachments()->create([
+                $research->attachments()->create([
                     'path' => $this->files->store($file, 'researches'),
                 ]);
             }
-            return $researches;
+
+            return true;
         });
     }
 
-    public function delete(researches $researches): void
+    /** Delete a research (with its files) */
+    public function delete(researches $research): bool
     {
-        foreach ($researches->attachments as $att) {
-            $this->files->delete($att->path);
-        }
-        $researches->delete();
+        return DB::transaction(function () use ($research) {
+            foreach ($research->attachments as $att) {
+                $this->files->delete($att->path);
+            }
+
+            return $research->delete();
+        });
     }
 }

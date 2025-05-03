@@ -29,7 +29,7 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         // يُعطي دور جميع الصلاحيات تلقائيًا
-        Gate::before(fn ($user, $ability) => $user->hasRole(') ? true : null);
+        Gate::before(fn ($user, $ability) => $user->hasRole('admin') ? true : null);
     }
 }
 

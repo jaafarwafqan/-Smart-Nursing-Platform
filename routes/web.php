@@ -56,6 +56,12 @@ Route::middleware('auth')->group(function () {
     Route::middleware('permission:manage_researches')->resource('researches', ResearchController::class);
 
     Route::middleware('permission:manage_users')->resource('users', UserController::class);
+
+
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::get('/users/create', [UserController::class, 'create'])
+            ->name('users.create');
+
     // ✅ مسار التصدير
     Route::get('users/export', [UserController::class, 'export'])
         ->name('users.export');

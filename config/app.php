@@ -6,6 +6,7 @@ return [
     'env'     => env('APP_ENV', 'production'),
     'debug'   => (bool) env('APP_DEBUG', false),
     'url'     => env('APP_URL', 'http://localhost'),
+    App\Providers\RepositoryServiceProvider::class,
 
     'timezone'        => 'Asia/Baghdad',
     'locale'          => env('APP_LOCALE', 'ar'),

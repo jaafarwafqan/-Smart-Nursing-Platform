@@ -9,7 +9,7 @@ class Kernel extends HttpKernel
     /**
      * Middleware تعمل مع كل طلب HTTP (عالميًا).
      */
-    protected array $middleware = [
+    protected $middleware = [
         \App\Http\Middleware\TrustProxies::class,
         \Illuminate\Http\Middleware\HandleCors::class,
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
@@ -21,7 +21,7 @@ class Kernel extends HttpKernel
     /**
      * مجموعات Middleware جاهزة ("web" و "api").
      */
-    protected array $middlewareGroups = [
+    protected $middlewareGroups = [
         'web' => [
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
@@ -38,7 +38,7 @@ class Kernel extends HttpKernel
     /**
      * الوسطاء المسمّاة (تُستخدم في Route::middleware()).
      */
-    protected array $middlewareAliases = [
+    protected $middlewareAliases = [
         /* --- Laravel Built‑ins --- */
         'auth'        => \App\Http\Middleware\Authenticate::class,
         'guest'       => \App\Http\Middleware\RedirectIfAuthenticated::class,
@@ -53,4 +53,13 @@ class Kernel extends HttpKernel
         'permission'          => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
         'role_or_permission'  => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
     ];
+
+    /**
+     * Load the application's command routes.
+     */
+    protected function commands()
+    {
+        $this->load(__DIR__.'/Commands');
+        require base_path('routes/console.php');
+    }
 }

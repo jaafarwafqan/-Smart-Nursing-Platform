@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\CampaignServiceInterface;
 use App\Models\Campaign;
 use App\Models\Branch;
 use App\Services\CampaignService;
@@ -11,10 +12,11 @@ use Illuminate\View\View;
 
 class CampaignController extends Controller
 {
-    public function __construct(private CampaignService $service)
+    public function __construct(private CampaignServiceInterface $service)
     {
         $this->authorizeResource(Campaign::class, 'campaign');
     }
+
 
     public function index(): View
     {
