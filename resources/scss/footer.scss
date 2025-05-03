@@ -1,0 +1,72 @@
+/* ----------------------------------------------------
+   Footer component – نسخة مُحسَّنة ومتجاوبة
+   -------------------------------------------------- */
+
+.footer-smart {
+    // خلفيّة متدرّجة أنيقة
+    background: linear-gradient(135deg, $primary 0%, darken($primary, 10%) 100%);
+    color: $light;
+    padding: 4rem 0 2rem;
+    margin-top: auto;            // يجعل الـFooter ملاصقاً للأسفل
+
+    // تقسيم المحتوى إلى 3 أعمدة على الشاشات الكبيرة
+    .footer-inner {
+        @extend .container;
+        @extend .row;
+
+        .footer-col {
+            @extend .col-12;
+            @extend .col-md-4;       // 3 أعمدة بدءًا من ≥768px
+            margin-bottom: 2rem;
+        }
+    }
+
+    /* العناوين */
+    h5 {
+        font-weight: 700;
+        margin-bottom: 1.25rem;
+        color: $warning;           // ذهبي لافت
+    }
+
+    /* النصوص والروابط */
+    p { opacity: .9; }
+
+    ul {
+        padding: 0;
+        list-style: none;
+
+        li a {
+            color: $light;
+            text-decoration: none;
+            display: block;
+            padding: .125rem 0;
+            transition: all .25s;
+
+            &:hover { color: $warning; transform: translateX(-4px); }
+        }
+    }
+
+    /* أيقونات التواصل الاجتماعي */
+    .social-links {
+        margin-top: .75rem;
+
+        a {
+            font-size: 1.35rem;
+            margin-inline: .4rem;
+            color: $light;
+            transition: transform .2s;
+
+            &:hover { color: $warning; transform: translateY(-3px); }
+        }
+    }
+
+    /* خط فاصل وحقوق */
+    .footer-bottom {
+        border-top: 1px solid rgba($light, .15);
+        margin-top: 2.5rem;
+        padding-top: 1.25rem;
+        font-size: .9rem;
+        text-align: center;
+        opacity: .85;
+    }
+}

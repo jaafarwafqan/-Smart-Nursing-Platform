@@ -1,0 +1,33 @@
+/* ----------------------------------------------------
+   Bootstrap variable overrides – must come *before*   │
+   @import "~bootstrap…" so أن يطبِّقها المترجم.        │
+---------------------------------------------------- */
+
+/* لوحة الألوان الرئيسـية */
+$primary   : #2c3e50;   // لون رئيسي داكن
+$secondary : #34495e;   // لون ثانوي
+$success   : #2ecc71;
+$warning   : #f1c40f;
+$danger    : #e74c3c;
+$info      : #1abc9c;
+$light     : #ecf0f1;
+$dark      : #2c3e50;
+
+/* خلفية ولون نص عام */
+$body-bg     : #f4f6f9;
+$body-color  : #333;
+
+/* خطوط */
+$font-family-sans-serif: 'Cairo', sans-serif;
+
+/* حواف وأبعاد */
+$border-radius      : .5rem;
+$navbar-height      : 70px;  // نستخدمها لاحقًا
+
+/* مسافات (مثال) */
+$spacer: 1rem;
+
+/* ----------------------------------------------------
+   يمكنك إضافة أو تغيير أي متغير من قائمة Bootstrap:
+   https://getbootstrap.com/docs/5.3/customize/sass/
+---------------------------------------------------- */

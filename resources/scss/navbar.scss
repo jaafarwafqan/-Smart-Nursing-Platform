@@ -1,0 +1,46 @@
+/* ===================================================================
+   Navbar محسَّنة (resources/scss/components/_navbar.scss)
+=================================================================== */
+.navbar-smart {
+    background: $dark;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .12);
+    min-height: $navbar-height;
+    transition: background .25s, box-shadow .25s;
+
+    /* ثابتة أعلى الصفحة */
+    &.fixed-top {
+        width: 100%;
+        inset-block-start: 0;   // top: 0 في RTL/LTR
+        inset-inline-start: 0;
+        z-index: 1030;
+    }
+    .navbar-smart .navbar-nav {
+        gap: .5rem;               // مسافة أفقيّة خفيفة بين الروابط
+    }
+
+    @include media-breakpoint-up(lg) {
+        .navbar-smart .navbar-nav {
+            gap: 1rem;             // مسافة أكبر على الشاشات العريضة
+        }
+    }
+
+    .nav-link,
+    .navbar-brand { color: $light !important; }
+
+    .nav-link {
+        &.active,
+        &:hover { color: $warning !important; }
+    }
+
+    /* أيقونة Toggler باللون الفاتح */
+    .navbar-toggler-icon {
+        filter: invert(1);
+    }
+
+    /* قائمة منسدلة RTL */
+    .dropdown-menu {
+        text-align: start;                // يدعم RTL
+        inset-inline-start: auto !important;
+        inset-inline-end: 0 !important;   // تفتح بمحاذاة اليمين
+    }
+}
