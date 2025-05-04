@@ -11,7 +11,8 @@ class UpdateUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->can('edit_users');
+        return auth()->check()                          // مستخدم مسجَّل
+            && auth()->user()->can('manage_users');
     }
 
     /**

@@ -3,21 +3,22 @@
 namespace App\Services;
 
 use App\Contracts\ResearchServiceInterface;
-use App\Models\researches;
+use App\Models\Research;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ResearchService implements ResearchServiceInterface
 {
-    public function __construct(private AttachmentService $files) {}
+    public function __construct(private Storage $files) {}
 
     /** Create a research */
-    public function create(array $data): researches
+    public function create(array $data): Research
     {
         return DB::transaction(function () use ($data) {
             $attachments = Arr::pull($data, 'attachments', []);
 
-            $research = researches::create($data);
+            $research = Research::create($data);
 
             foreach ($attachments as $file) {
                 $research->attachments()->create([
@@ -30,7 +31,7 @@ class ResearchService implements ResearchServiceInterface
     }
 
     /** Update a research */
-    public function update(researches $research, array $data): bool
+    public function update(Research $research, array $data): bool
     {
         return DB::transaction(function () use ($research, $data) {
             $newFiles = Arr::pull($data, 'attachments', []);
@@ -47,7 +48,7 @@ class ResearchService implements ResearchServiceInterface
     }
 
     /** Delete a research (with its files) */
-    public function delete(researches $research): bool
+    public function delete(Research $research): bool
     {
         return DB::transaction(function () use ($research) {
             foreach ($research->attachments as $att) {

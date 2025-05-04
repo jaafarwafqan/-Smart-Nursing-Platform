@@ -57,10 +57,16 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('permission:manage_users')->resource('users', UserController::class);
 
+    Route::resource('users', UserController::class);   // لا تضف can هنا
+    Route::get('users/{user}/attachments', [UserController::class, 'attachments'])
+        ->name('users.attachments');
 
-    Route::post('/users', [UserController::class, 'store'])->name('users.store');
-        Route::get('/users/create', [UserController::class, 'create'])
-            ->name('users.create');
+    Route::get('/profile',         [ UserController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile',       [UserController::class, 'update'])->name('profile.update');
+    Route::put('/profile/pass',  [UserController::class, 'changePassword'])->name('profile.changePassword');
+
+
+
 
     // ✅ مسار التصدير
     Route::get('users/export', [UserController::class, 'export'])

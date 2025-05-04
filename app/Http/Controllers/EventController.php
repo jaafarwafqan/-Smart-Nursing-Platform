@@ -8,6 +8,8 @@ use App\Models\Branch;
 use App\Services\EventService;
 use App\Http\Requests\StoreEventRequest;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\View\View;
 
 class EventController extends Controller
@@ -19,20 +21,49 @@ class EventController extends Controller
     }
 
     /** عرض جميع الفعاليات */
-    public function index(): View
+    public function index(Request $request)
     {
-        $events = Event::with('branch')->latest()->paginate(10);
-        $event_types = config('types.event_types', []);
+        $events = Event::query()
+            ->when($request->event_type, fn($q,$v)=>$q->where('event_type',$v))
+            ->when($request->event_title,fn($q,$v)=>$q->where('event_title','like',"%$v%"))
+            ->when($request->branch,    fn($q,$v)=>$q->where('branch',$v))
+            ->orderBy($request->get('sort','event_datetime'), $request->get('direction','desc'))
+            ->paginate(15);
 
-        return view('events.index', compact('events', 'event_types'));
+        $stats = [
+            'total'            => Event::count(),
+            'upcoming'         => Event::where('event_datetime','>',now())->count(),
+            'attendance_sum'   => Event::sum('attendance'),
+            'attendance_avg'   => round(Event::avg('attendance')),
+        ];
 
+        return view('events.index', [
+            'events'      => $events,
+            'stats'       => $stats,
+            'eventTypes'  => config('types.event_types',[]),
+            'branches'    => config('branches',[]),
+        ]);
     }
 
+
     /** نموذج إنشاء فعاليّة */
-    public function create(): View
+    public function create()
     {
-        $branches = Branch::pluck('name', 'id');
-        return view('events.create', compact('branches'));
+        return view('events.create', [
+            'event'      => null,
+            'branches' => \App\Models\Branch::pluck('name', 'id'),          // id => name
+            'eventTypes' => Config::get('types.event_types', []),   // ['ندوة','ورشة'…]
+        ]);
+    }
+
+    public function edit(Event $event)
+    {
+        return view('events.edit', [
+            'event'      => $event,
+            'branches' => \App\Models\Branch::pluck('name', 'id'),
+            'eventTypes' => Config::get('types.event_types', []),
+
+        ]);
     }
 
     /** تخزين فعاليّة جديدة */
@@ -42,20 +73,14 @@ class EventController extends Controller
         return to_route('events.show', $event)
             ->withSuccess('تمّت إضافة الفعاليّة بنجاح');
     }
-
-    /** صفحة عرض فعاليّة مفردة */
     public function show(Event $event): View
     {
-        return view('events._form', compact('event'));
+        return view('events._form', [
+            'event'      => $event,
+            'branches'   => \App\Models\Branch::pluck('name', 'id'),
+            'eventTypes' => \Illuminate\Support\Facades\Config::get('types.event_types', []),
+        ]);
     }
-
-    /** نموذج التعديل */
-    public function edit(Event $event): View
-    {
-        $branches = Branch::pluck('name', 'id');
-        return view('events.edit', compact('event', 'branches'));
-    }
-
     /** تحديث البيانات */
     public function update(StoreEventRequest $request, Event $event): RedirectResponse
     {

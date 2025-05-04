@@ -24,7 +24,7 @@
             @foreach([
                 ['icon'=>'calendar-check','count'=>\App\Models\Event::count(),'label'=>'الفعاليات','color'=>'primary'],
                 ['icon'=>'bullhorn','count'=>\App\Models\Campaign::count(),'label'=>'الحملات','color'=>'success'],
-                ['icon'=>'microscope','count'=>class_exists(\App\Models\researches::class) ? \App\Models\researches::count() : 0,'label'=>'البحوث','color'=>'info'],
+                ['icon'=>'microscope','count'=>\App\Models\Research::class ::count(),'label'=>'البحوث','color'=>'info'],
                 ['icon'=>'users','count'=>\App\Models\User::count(),'label'=>'المستخدمين','color'=>'warning'],
             ] as $stat)
                 <div class="col-sm-6 col-lg-3">

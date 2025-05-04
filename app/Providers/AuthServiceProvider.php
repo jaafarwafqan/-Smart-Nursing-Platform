@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Gate;
 
 use App\Models\Event;
 use App\Models\Campaign;
-use App\Models\researches;
+use App\Models\Research;
 use App\Models\User;
 
 use App\Policies\EventPolicy;
@@ -20,7 +20,7 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         Event::class    => EventPolicy::class,
         Campaign::class => CampaignPolicy::class,
-        researches::class => ResearchPolicy::class,
+        Research::class => ResearchPolicy::class,
         User::class     => UserPolicy::class,
     ];
 

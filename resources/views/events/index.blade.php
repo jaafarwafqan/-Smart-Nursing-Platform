@@ -1,26 +1,35 @@
+{{-- resources/views/events/index.blade.php --}}
 @extends('layouts.app')
-@section('title', 'إدارة الفعاليات')
+@section('title','إدارة الفعاليات')
 
 @section('content')
     <div class="container-fluid py-3">
 
         {{-- بطاقات الإحصاء --}}
         <div class="row row-cols-1 row-cols-lg-4 g-3 mb-4">
-            <x-stat-card color="primary"  :value="\App\Models\Event::count()"                       icon="calendar-check" title="إجمالي الفعاليات"/>
-            <x-stat-card color="success"  :value="\App\Models\Event::where('event_datetime','>',now())->count()" icon="clock" title="الفعاليات القادمة"/>
-            <x-stat-card color="info"     :value="\App\Models\Event::sum('attendance')"            icon="users" title="إجمالي المشاركين"/>
-            <x-stat-card color="warning"  :value="round(\App\Models\Event::avg('attendance'))"     icon="chart-line" title="متوسط المشاركين"/>
+            <div class="col">
+            <x-stat-card color="primary"  :value="$stats['total']"           icon="calendar-check" title="إجمالي الفعاليات"/>
+            </div>
+            <div class="col">
+            <x-stat-card color="success"  :value="$stats['upcoming']"        icon="clock"          title="الفعاليات القادمة"/>
+            </div>
+            <div class="col">
+            <x-stat-card color="info"     :value="$stats['attendance_sum']"  icon="users"          title="إجمالي المشاركين"/>
+            </div>
+            <div class="col">
+            <x-stat-card color="warning"  :value="$stats['attendance_avg']"  icon="chart-line"     title="متوسط المشاركين"/>
+            </div>
         </div>
 
         <div class="card shadow-sm">
             <div class="card-header bg-white py-3 d-flex justify-content-between">
                 <h3 class="h5 mb-0">إدارة الفعاليات</h3>
-                <div>
-                    <a href="{{ route('events.create') }}"  class="btn btn-sm btn-primary ms-2">
+                <div class="d-flex gap-2">
+                    <a href="{{ route('events.create') }}"  class="btn btn-sm btn-primary">
                         <i class="fas fa-plus"></i> إضافة فعالية
                     </a>
                     <a href="{{ route('events.export') }}" class="btn btn-sm btn-success">
-                        <i class="fas fa-file-excel"></i> تصدير Excel
+                        <i class="fas fa-file-excel"></i> تصدير Excel
                     </a>
                 </div>
             </div>
@@ -30,54 +39,48 @@
                 @include('partials.alerts')
 
                 {{-- فلاتر البحث --}}
-                <form method="GET" action="{{ route('events.index') }}" class="mb-4">
-                    <div class="row g-3">
-                        <div class="col-md-3">
-                            <x-form.select name="event_type" label="نوع الفعالية">
-                                <option value="">الكل</option>
-                                @foreach(config('types.event_types', []) as $type)
-                                    <option value="{{ $type }}" @selected(request('event_type')==$type)>
-                                        {{ $type }}
-                                    </option>
-                                @endforeach
-                            </x-form.select>
-                        </div>
+                <form method="GET" action="{{ route('events.index') }}" class="row gy-2 gx-2 align-items-end mb-4">
+                    <div class="col-12 col-lg-3">
+                        <x-form.select name="event_type" label="نوع الفعالية">
+                            <option value="">الكل</option>
+                            @foreach($eventTypes as $type)
+                                <option value="{{ $type }}" @selected(request('event_type')==$type)>{{ $type }}</option>
+                            @endforeach
+                        </x-form.select>
+                    </div>
 
-                        <div class="col-md-3">
-                            <x-form.input name="event_title" label="عنوان الفعالية"
-                                          :value="request('event_title')" placeholder="ابحث عن فعالية..."/>
-                        </div>
+                    <div class="col-12 col-lg-3">
+                        <x-form.input name="event_title" label="عنوان الفعالية"
+                                      :value="request('event_title')" placeholder="ابحث عن فعالية..."/>
+                    </div>
 
-                        <div class="col-md-3">
-                            <x-form.select name="branch" label="الفرع">
-                                <option value="">الكل</option>
-                                @foreach(config('branches', []) as $branch)
-                                    <option value="{{ $branch }}" @selected(request('branch')==$branch)>
-                                        {{ $branch }}
-                                    </option>
-                                @endforeach
-                            </x-form.select>
-                        </div>
+                    <div class="col-12 col-lg-3">
+                        <x-form.select name="branch" label="الفرع">
+                            <option value="">الكل</option>
+                            @foreach($branches as $branch)
+                                <option value="{{ $branch }}" @selected(request('branch')==$branch)>{{ $branch }}</option>
+                            @endforeach
+                        </x-form.select>
+                    </div>
 
-                        <div class="col-md-3 align-self-end">
-                            <x-button.primary class="w-100">
-                                <i class="fas fa-search"></i> بحث
-                            </x-button.primary>
-                        </div>
+                    <div class="col-12 col-lg-3 d-grid">
+                        <x-button.primary>
+                            <i class="fas fa-search"></i> بحث
+                        </x-button.primary>
                     </div>
                 </form>
 
                 {{-- جدول الفعاليات --}}
                 <div class="table-responsive">
-                    <table class="table table-bordered table-hover align-middle">
+                    <table class="table table-bordered table-hover align-middle custom-table datatable">
                         <thead class="table-light">
                         <tr>
                             <th>التسلسل</th>
-                            <th>{!! sort_link('نوع الفعالية', 'event_type') !!}</th>
-                            <th>{!! sort_link('عنوان الفعالية', 'event_title') !!}</th>
-                            <th>{!! sort_link('التاريخ والوقت', 'event_datetime') !!}</th>
-                            <th>{!! sort_link('الموقع', 'location') !!}</th>
-                            <th>{!! sort_link('الفرع', 'branch') !!}</th>
+                            <th>{!! sort_link('نوع الفعالية','event_type') !!}</th>
+                            <th>{!! sort_link('عنوان الفعالية','event_title') !!}</th>
+                            <th>{!! sort_link('التاريخ والوقت','event_datetime') !!}</th>
+                            <th>{!! sort_link('الموقع','location') !!}</th>
+                            <th>{!! sort_link('الفرع','branch') !!}</th>
                             <th>المرفقات</th>
                             <th class="text-center">الإجراءات</th>
                         </tr>
@@ -86,40 +89,54 @@
                         <tbody>
                         @forelse ($events as $event)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $event->event_type }}</td>
+                                <td>{{ ($events->currentPage()-1)*$events->perPage() + $loop->iteration }}</td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ $event->event_type }}</span>
+                                </td>
                                 <td>{{ $event->event_title }}</td>
-                                <td>{{ $event->event_datetime }}</td>
+                                <td>{{ $event->event_datetime->format('Y-m-d H:i') }}</td>
                                 <td>{{ $event->location }}</td>
-                                <td>{{ $event->branch }}</td>
+                                <td>{{ optional($event->branch)->name ?? '—' }}</td>
+
 
                                 {{-- المرفقات --}}
                                 <td>
-                                    @forelse ($event->attachments as $att)
-                                        <a href="{{ asset('storage/'.$att->path) }}" target="_blank">عرض</a><br>
-                                        @empty
-                                            &mdash;
+                                    @forelse($event->attachments ?? [] as $file)
+                                        <a href="{{ asset('storage/events/'.$file) }}" target="_blank"
+                                           class="attachment-link d-block">
+                                            <i class="fas fa-file-download"></i>
+                                            <span class="text-truncate d-inline-block" style="max-width: 90px">
+                                            {{ \Str::limit($file,15) }}
+                                        </span>
+                                        </a>
+                                        @empty &mdash;
                                     @endforelse
                                 </td>
 
-                                {{-- الإجراءات --}}
+                                {{-- إجراءات --}}
                                 <td class="text-center">
-                                    <a href="{{ route('events.edit', $event) }}" class="btn btn-sm btn-warning">
-                                        <i class="fas fa-edit"></i> تعديل
-                                    </a>
+                                    @can('update',$event)
+                                        <a href="{{ route('events.edit',$event) }}" class="btn btn-sm btn-warning" title="تعديل">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    @endcan
 
-                                    <form action="{{ route('events.destroy', $event) }}" method="POST" class="d-inline"
-                                          onsubmit="return confirm('حذف هذه الفعالية؟');">
-                                        @csrf @method('DELETE')
-                                        <button class="btn btn-sm btn-danger">
-                                            <i class="fas fa-trash"></i> حذف
-                                        </button>
-                                    </form>
+                                    @can('delete',$event)
+                                        <form action="{{ route('events.destroy',$event) }}" method="POST"
+                                              class="d-inline" onsubmit="return confirm('حذف هذه الفعالية؟');">
+                                            @csrf @method('DELETE')
+                                            <button class="btn btn-sm btn-danger" title="حذف">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    @endcan
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center">لا توجد فعاليات</td>
+                                <td colspan="8" class="text-center">
+                                    <i class="fas fa-inbox fa-2x mb-2"></i><br>لا توجد فعاليات
+                                </td>
                             </tr>
                         @endforelse
                         </tbody>

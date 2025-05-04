@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Event;
-use App\Models\ResearchProposal;
+
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -20,29 +20,29 @@ class RoleAccessTest extends TestCase
     {
         parent::setUp();
 
-        // تعطيل كاش الصلاحيات أثناء الاختبار
+        // Disable permission cache during testing
         config(['permission.cache.store' => 'array']);
         app()['cache']->flush();
         Artisan::call('permission:cache-reset');
 
-        // إنشاء فرع رئيسي للاختبار
+        // Create branches for testing
         Branch::firstOrCreate(['id' => 1, 'name' => 'رئيسي']);
         Branch::firstOrCreate(['id' => 2, 'name' => 'فرع 2']);
 
-        // إنشاء الصلاحيات
+        // Create permissions
         Permission::firstOrCreate(['name' => 'manage_events', 'guard_name' => 'web']);
         Permission::firstOrCreate(['name' => 'manage_campaigns', 'guard_name' => 'web']);
         Permission::firstOrCreate(['name' => 'view_events', 'guard_name' => 'web']);
         Permission::firstOrCreate(['name' => 'edit_events', 'guard_name' => 'web']);
 
-        // إنشاء الأدوار
-        $ole = Role::firstOrCreate(['name' => ', 'guard_name' => 'web']);
+        // Create roles
+        $ole = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
         $professorRole = Role::firstOrCreate(['name' => 'professor', 'guard_name' => 'web']);
         $studentRole = Role::firstOrCreate(['name' => 'student', 'guard_name' => 'web']);
         $supervisorRole = Role::firstOrCreate(['name' => 'supervisor', 'guard_name' => 'web']);
         $userRole = Role::firstOrCreate(['name' => 'user', 'guard_name' => 'web']);
 
-        // ربط الصلاحيات بالأدوار
+        // Assign permissions to roles
         $ole->givePermissionTo(['manage_events', 'manage_campaigns', 'view_events', 'edit_events']);
         $supervisorRole->givePermissionTo(['manage_events', 'view_events', 'edit_events']);
         $userRole->givePermissionTo(['view_events']);
@@ -51,9 +51,9 @@ class RoleAccessTest extends TestCase
     /** @test */
     public function can_access_everything()
     {
-        $= User::factory()->create(['is_ => true, 'branch_id' => 1]);
-        $>assignRole(');
-        $this->actingAs($>fresh(), 'web');
+        $admin = User::factory()->create(['is_admin' => true, 'branch_id' => 1]);
+        $admin->assignRole('admin');
+        $this->actingAs($admin->fresh(), 'web');
 
         $this->get(route('events.index'))->assertStatus(200);
         $this->get(route('campaigns.index'))->assertStatus(200);
@@ -62,7 +62,7 @@ class RoleAccessTest extends TestCase
     /** @test */
     public function professor_cannot_access_events_or_campaigns()
     {
-        $prof = User::factory()->create(['is_ => false]);
+        $prof = User::factory()->create(['is_admin' => false]);
         $prof->assignRole('professor');
         $this->actingAs($prof);
 
@@ -73,7 +73,7 @@ class RoleAccessTest extends TestCase
     /** @test */
     public function student_cannot_create_or_edit_proposals()
     {
-        $student = User::factory()->create(['is_ => false]);
+        $student = User::factory()->create(['is_admin' => false]);
         $student->assignRole('student');
         $this->actingAs($student);
 
@@ -85,7 +85,7 @@ class RoleAccessTest extends TestCase
     /** @test */
     public function supervisor_can_only_see_and_edit_his_branch_events()
     {
-        $supervisor = User::factory()->create(['branch_id' => 1, 'is_ => false]);
+        $supervisor = User::factory()->create(['branch_id' => 1, 'is_admin' => false]);
         $supervisor->assignRole('supervisor');
         $this->actingAs($supervisor->fresh(), 'web');
 
@@ -100,7 +100,7 @@ class RoleAccessTest extends TestCase
     /** @test */
     public function user_can_only_see_his_branch_events()
     {
-        $user = User::factory()->create(['branch_id' => 1, 'is_ => false]);
+        $user = User::factory()->create(['branch_id' => 1, 'is_admin' => false]);
         $user->assignRole('user');
         $this->actingAs($user->fresh(), 'web');
 

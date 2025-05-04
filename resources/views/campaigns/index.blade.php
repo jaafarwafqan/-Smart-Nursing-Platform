@@ -10,10 +10,18 @@
 
         {{-- بطاقات الإحصاء --}}
         <div class="row row-cols-1 row-cols-lg-4 g-3 mb-4">
+            <div class="col">
             <x-stat-card color="dark"    icon="clipboard-list" :value="$stats['total_campaigns']     ?? 0" title="إجمالي الحملات"/>
+            </div>
+            <div class="col">
             <x-stat-card color="success" icon="users"          :value="$stats['total_participants']   ?? 0" title="إجمالي المشاركين"/>
+            </div>
+            <div class="col">
             <x-stat-card color="primary" icon="clock"          :value="$stats['pending_campaigns']   ?? 0" title="الحملات القادمة"/>
+            </div>
+            <div class="col">
             <x-stat-card color="warning" icon="chart-line"     :value="$stats['average_participants']?? 0" title="متوسط المشاركين"/>
+            </div>
         </div>
 
         {{-- غلاف البطاقة --}}

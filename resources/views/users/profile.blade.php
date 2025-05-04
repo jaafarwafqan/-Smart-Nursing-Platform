@@ -1,85 +1,103 @@
 @extends('layouts.app')
 
+@section('title', 'ملفي الشخصي')
+
 @section('content')
-    <div class="container mt-5">
-        <h2 class="text-center mb-4">تعديل المعلومات الشخصية</h2>
+    <main class="container py-4">
 
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="إغلاق">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        @endif
-
-        @if($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <ul class="mb-0">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-                <button type="button" class="close" data-dismiss="alert" aria-label="إغلاق">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        @endif
-
-        <div class="row">
-            <!-- نموذج تعديل المعلومات الشخصية -->
+        <h2 class="text-center mb-4"><i class="fas fa-user-cog"></i> تعديل المعلومات الشخصية</h2>
+        <div class="row g-4">
+            {{-- رسائل نجاح / خطأ --}}
+            @include('partials.alerts')
+            {{-- معلومات المستخدم --}}
             <div class="col-md-6">
-                <div class="card shadow-sm mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-primary text-white">
+                        <i class="fas fa-id-card-alt"></i> بياناتي
+                    </div>
+
                     <div class="card-body">
-                        <h4 class="card-title mb-3">تعديل المعلومات</h4>
-                        <form action="{{ route('profile.update') }}" method="POST">
+
+                        <form method="POST" action="{{ route('profile.update') }}" class="row g-3">
                             @csrf
                             @method('PUT')
-                            <div class="form-group">
-                                <label for="name">الاسم</label>
-                                <input type="text" class="form-control" id="name" name="name"
-                                       value="{{ old('name', auth()->user()->name) }}" required>
+
+                            <x-form.input
+                                class="col-12"
+                                name="name"
+                                label="الاسم"
+                                :value="old('name', auth()->user()->name)"
+                                required
+                            />
+
+                            <x-form.input
+                                class="col-12"
+                                type="email"
+                                name="email"
+                                label="البريد الإلكتروني"
+                                :value="old('email', auth()->user()->email)"
+                                required
+                            />
+
+                            <div class="col-12 text-end">
+                                <x-button.primary>
+                                    <i class="fas fa-save"></i> حفظ
+                                </x-button.primary>
                             </div>
-                            <div class="form-group">
-                                <label for="email">البريد الإلكتروني</label>
-                                <input type="email" class="form-control" id="email" name="email"
-                                       value="{{ old('email', auth()->user()->email) }}" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> حفظ التعديلات
-                            </button>
                         </form>
+
                     </div>
                 </div>
             </div>
 
-            <!-- نموذج تغيير كلمة المرور -->
+            {{-- تغيير كلمة المرور --}}
             <div class="col-md-6">
-                <div class="card shadow-sm">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-warning text-dark">
+                        <i class="fas fa-key"></i> كلمة المرور
+                    </div>
+
                     <div class="card-body">
-                        <h4 class="card-title mb-3">تغيير كلمة المرور</h4>
-                        <form action="{{ route('profile.changePassword') }}" method="POST">
+
+                        <form method="POST" action="{{ route('profile.changePassword') }}" class="row g-3">
                             @csrf
                             @method('PUT')
-                            <div class="form-group">
-                                <label for="current_password">كلمة المرور الحالية</label>
-                                <input type="password" class="form-control" id="current_password" name="current_password" required>
+
+                            <x-form.input
+                                class="col-12"
+                                type="password"
+                                name="current_password"
+                                label="كلمة المرور الحالية"
+                                required
+                            />
+
+                            <x-form.input
+                                class="col-12"
+                                type="password"
+                                name="new_password"
+                                label="كلمة المرور الجديدة"
+                                required
+                            />
+
+                            <x-form.input
+                                class="col-12"
+                                type="password"
+                                name="new_password_confirmation"
+                                label="تأكيد كلمة المرور الجديدة"
+                                required
+                            />
+
+                            <div class="col-12 text-end">
+                                <x-button.warning>
+                                    <i class="fas fa-sync-alt"></i> تحديث
+                                </x-button.warning>
                             </div>
-                            <div class="form-group">
-                                <label for="new_password">كلمة المرور الجديدة</label>
-                                <input type="password" class="form-control" id="new_password" name="new_password" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="new_password_confirmation">تأكيد كلمة المرور الجديدة</label>
-                                <input type="password" class="form-control" id="new_password_confirmation" name="new_password_confirmation" required>
-                            </div>
-                            <button type="submit" class="btn btn-warning">
-                                <i class="fas fa-key"></i> تحديث كلمة المرور
-                            </button>
                         </form>
+
                     </div>
                 </div>
             </div>
+
         </div>
-    </div>
+    </main>
 @endsection

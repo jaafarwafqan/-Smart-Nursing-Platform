@@ -4,17 +4,27 @@
     $isEdit = ! is_null($event);
 @endphp
 
+
 <x-form.select name="branch_id" label="الفرع">
     @foreach($branches as $id => $name)
-        <option value="{{ $id }}" @selected(old('branch_id', $event->branch_id ?? '') == $id)>{{ $name }}</option>
+        <option value="{{ $id }}"
+            @selected(old('branch_id', $event->branch_id ?? '') === $id)>
+            {{ $name }}
+        </option>
     @endforeach
 </x-form.select>
 
 <x-form.input name="event_title" label="عنوان الفعالية"
               :value="old('event_title', $event->event_title ?? '')" />
 
-<x-form.input name="event_type" label="نوع الفعالية"
-              :value="old('event_type', $event->event_type ?? '')" />
+<x-form.select  name="event_type"   label="نوع الفعالية">
+    @foreach($eventTypes as $type)
+        <option value="{{ $type }}"
+            @selected(old('event_type', $event->event_type ?? '') === $type)>
+            {{ $type }}
+        </option>
+    @endforeach
+</x-form.select>
 
 <x-form.input type="datetime-local" name="event_datetime" label="التاريخ والوقت"
               :value="old('event_datetime', optional($event?->event_datetime)->format('Y-m-d\TH:i'))" />

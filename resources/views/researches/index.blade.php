@@ -2,12 +2,31 @@
 @section('title','البحوث')
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1 class="h4 mb-0">قائمة البحوث</h1>
+    <div class="container-fluid py-3">
 
+        {{-- بطاقات الإحصاء --}}
+        <div class="row row-cols-1 row-cols-lg-4 g-3 mb-4">
+            <div class="col">
+                <x-stat-card color="primary" icon="book" :value="$stats['total']" title="إجمالي البحوث"/>
+            </div>
+            <div class="col">
+                <x-stat-card color="success" icon="check" :value="$stats['completed']" title="البحوث المكتملة"/>
+            </div>
+            <div class="col">
+                <x-stat-card color="warning" icon="exclamation" :value="$stats['pending']" title="البحوث المعلقة"/>
+            </div>
+            <div class="col">
+                <x-stat-card color="danger" icon="times" :value="$stats['rejected']" title="البحوث المرفوضة"/>
+            </div>
+        </div>
+        <div class="card shadow-sm">
+            <div class="card-header bg-white py-3 d-flex justify-content-between">
+        <h1 class="h4 mb-0">قائمة البحوث</h1>
             <a href="{{ route('researches.create') }}" class="btn btn-sm btn-success">
                 <i class="fas fa-plus"></i> إضافة بحث
             </a>
+
+            </div>
     </div>
 
     <table class="table table-striped align-middle">

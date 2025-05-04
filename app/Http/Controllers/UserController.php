@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\UserServiceInterface;
 use App\Models\User;
 use App\Models\Branch;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
-    public function __construct(private UserService $service)
+    public function __construct(private UserServiceInterface $service)
     {
         $this->authorizeResource(User::class, 'user');
     }
