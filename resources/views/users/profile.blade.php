@@ -88,9 +88,9 @@
                             />
 
                             <div class="col-12 text-end">
-                                <x-button.warning>
+                                <x-button.primary>
                                     <i class="fas fa-sync-alt"></i> تحديث
-                                </x-button.warning>
+                                </x-button.primary>
                             </div>
                         </form>
 

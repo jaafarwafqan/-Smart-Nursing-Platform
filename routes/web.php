@@ -61,12 +61,9 @@ Route::middleware('auth')->group(function () {
     Route::get('users/{user}/attachments', [UserController::class, 'attachments'])
         ->name('users.attachments');
 
-    Route::get('/profile',         [ UserController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile',       [UserController::class, 'update'])->name('profile.update');
-    Route::put('/profile/pass',  [UserController::class, 'changePassword'])->name('profile.changePassword');
-
-
-
+    Route::get('/profile', [UserController::class, 'profile'])->name('profile.edit');
+    Route::put('/profile', [UserController::class, 'updateProfile'])->name('profile.update');
+    Route::put('/profile/pass', [UserController::class, 'changePassword'])->name('profile.changePassword');
 
     // ✅ مسار التصدير
     Route::get('users/export', [UserController::class, 'export'])

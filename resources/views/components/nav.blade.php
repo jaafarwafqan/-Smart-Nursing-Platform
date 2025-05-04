@@ -54,13 +54,6 @@
                                     <i class="fas fa-user-edit me-1"></i> ملفي الشخصي
                                 </a>
                             </li>
-
-                            <li>
-                                <a class="dropdown-item" href="{{ route('profile.edit') }}#password">
-                                    <i class="fas fa-key me-1"></i> تغيير كلمة المرور
-                                </a>
-                            </li>
-
                             <li><hr class="dropdown-divider"></li>
 
                             <li>

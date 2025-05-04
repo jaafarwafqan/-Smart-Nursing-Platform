@@ -58,6 +58,40 @@ class UserController extends Controller
             'roles'    => Role::pluck('name'),
         ]);
     }
+
+    public function profile(): View
+    {
+        return view('users.profile', [
+            'user' => auth()->user()
+        ]);
+    }
+
+    public function updateProfile(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . auth()->id(),
+        ]);
+
+        auth()->user()->update($request->only(['name', 'email']));
+
+        return back()->withSuccess('تم تحديث الملف الشخصي بنجاح');
+    }
+
+    public function changePassword(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'current_password' => 'required|current_password',
+            'new_password' => 'required|string|min:6|confirmed',
+        ]);
+
+        auth()->user()->update([
+            'password' => bcrypt($request->new_password)
+        ]);
+
+        return back()->withSuccess('تم تحديث كلمة المرور بنجاح');
+    }
+
     public function export(Request $request)
     {
         return (new \App\Exports\UsersExport($request->all()))->download('users.xlsx');
