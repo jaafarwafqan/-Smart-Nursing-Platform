@@ -17,12 +17,14 @@ use App\Policies\UserPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
+
     protected $policies = [
-        Event::class    => EventPolicy::class,
-        Campaign::class => CampaignPolicy::class,
-        Research::class => ResearchPolicy::class,
-        User::class     => UserPolicy::class,
+        Campaign::class   => CampaignPolicy::class,
+        Event::class      => EventPolicy::class,
+        Research::class   => ResearchPolicy::class,
+        User::class       => UserPolicy::class,
     ];
+
 
     public function boot(): void
     {

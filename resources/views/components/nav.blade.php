@@ -29,7 +29,9 @@
                 @can('manage_researches')
                     <li class="nav-item"><a class="nav-link" href="{{ route('researches.index') }}">البحوث</a></li>
                 @endcan
-                    <li class="nav-item"><a class="nav-link" href="{{ route('dashboard.index') }}">التقارير</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('students.index') }}">الطلاب</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('professors.index') }}">الأساتذة</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('dashboard.index') }}">التقارير</a></li>
                 @can('manage_users')
                     <li class="nav-item"><a class="nav-link" href="{{ route('users.index') }}">المستخدمون</a></li>
                 @endcan
@@ -43,29 +45,21 @@
                 @auth
                     {{-- قائمة منسدلة للمستخدم --}}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button"
-                           data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-circle"></i> {{ Str::limit(Auth::user()->name, 15) }}
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            {{ Str::before(auth()->user()->name,' ') }}
                         </a>
-
-                        <ul class="dropdown-menu dropdown-menu-end text-end">
-                            <li>
-                                <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                    <i class="fas fa-user-edit me-1"></i> ملفي الشخصي
-                                </a>
-                            </li>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="fas fa-user-cog me-1"></i> الحساب الشخصى</a></li>
                             <li><hr class="dropdown-divider"></li>
-
                             <li>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <button class="dropdown-item text-danger">
-                                        <i class="fas fa-sign-out-alt me-1"></i> خروج
-                                    </button>
+                                    <button class="dropdown-item"><i class="fas fa-sign-out-alt me-1"></i> خروج</button>
                                 </form>
                             </li>
                         </ul>
                     </li>
+
                 @else
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('login') }}">

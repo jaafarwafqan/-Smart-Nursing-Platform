@@ -50,7 +50,7 @@ class UserService implements UserServiceInterface
     public function delete(User $user): bool
     {
         return DB::transaction(function () use ($user) {
-            foreach ($user->attachments as $att) {
+            foreach (($user->attachments ?? []) as $att) {
                 $this->files->delete($att->path);
             }
 

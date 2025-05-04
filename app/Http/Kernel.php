@@ -62,4 +62,11 @@ class Kernel extends HttpKernel
         $this->load(__DIR__.'/Commands');
         require base_path('routes/console.php');
     }
+    // app/Http/Kernel.php
+    protected $routeMiddleware = [
+        // …
+        'role'       => \Spatie\Permission\Middlewares\RoleMiddleware::class,
+        'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
+    ];
+
 }

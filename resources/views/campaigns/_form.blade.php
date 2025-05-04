@@ -1,9 +1,10 @@
 @props(['campaign'=>null,'branches'])
 @php $isEdit=!is_null($campaign); @endphp
 
+
 <x-form.select name="branch_id" label="الفرع">
-    @foreach($branches as $id=>$name)
-        <option value="{{ $id }}" @selected(old('branch_id',$campaign->branch_id??'')==$id)>{{ $name }}</option>
+    @foreach($branches as $id => $name)
+        <option value="{{ $id }}" @selected(old('branch_id', $event->branch_id ?? '')==$id)>{{ $name }}</option>
     @endforeach
 </x-form.select>
 

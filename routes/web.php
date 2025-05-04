@@ -7,6 +7,8 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\ResearchController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\ProfessorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,10 +56,9 @@ Route::middleware('auth')->group(function () {
 
 
     Route::middleware('permission:manage_researches')->resource('researches', ResearchController::class);
+    Route::get('researches/{research}/download', [ResearchController::class, 'download'])->name('researches.download');
 
     Route::middleware('permission:manage_users')->resource('users', UserController::class);
-
-    Route::resource('users', UserController::class);   // لا تضف can هنا
     Route::get('users/{user}/attachments', [UserController::class, 'attachments'])
         ->name('users.attachments');
 
@@ -68,5 +69,33 @@ Route::middleware('auth')->group(function () {
     // ✅ مسار التصدير
     Route::get('users/export', [UserController::class, 'export'])
         ->name('users.export');
+
+    // مسارات الطلاب
+    Route::prefix('students')->middleware(['auth'])->group(function () {
+        Route::get('/', [StudentController::class, 'index'])->name('students.index');
+        Route::get('/create', [StudentController::class, 'create'])->name('students.create');
+        Route::post('/', [StudentController::class, 'store'])->name('students.store');
+        Route::get('/{student}/edit', [StudentController::class, 'edit'])->name('students.edit');
+        Route::put('/{student}', [StudentController::class, 'update'])->name('students.update');
+        Route::delete('/{student}', [StudentController::class, 'destroy'])->name('students.destroy');
+        Route::get('/import', [StudentController::class, 'importForm'])->name('students.import.form');
+        Route::post('/import', [StudentController::class, 'import'])->name('students.import');
+        Route::get('/export', [StudentController::class, 'export'])->name('students.export');
+        Route::post('/{student}/attach-research', [StudentController::class, 'attachResearch'])->name('students.attachResearch');
+    });
+
+    // مسارات الأساتذة
+    Route::prefix('professors')->middleware(['auth'])->group(function () {
+        Route::get('/', [ProfessorController::class, 'index'])->name('professors.index');
+        Route::get('/create', [ProfessorController::class, 'create'])->name('professors.create');
+        Route::post('/', [ProfessorController::class, 'store'])->name('professors.store');
+        Route::get('/{professor}/edit', [ProfessorController::class, 'edit'])->name('professors.edit');
+        Route::put('/{professor}', [ProfessorController::class, 'update'])->name('professors.update');
+        Route::delete('/{professor}', [ProfessorController::class, 'destroy'])->name('professors.destroy');
+        Route::get('/import', [ProfessorController::class, 'importForm'])->name('professors.import.form');
+        Route::post('/import', [ProfessorController::class, 'import'])->name('professors.import');
+        Route::get('/export', [ProfessorController::class, 'export'])->name('professors.export');
+        Route::post('/{professor}/attach-research', [ProfessorController::class, 'attachResearch'])->name('professors.attachResearch');
+    });
 
 });

@@ -80,27 +80,28 @@
                 </form>
 
                 {{-- جدول الحملات --}}
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover align-middle custom-table datatable">
-                        <thead class="table-light">
+                {{-- ✅ جدول الحملات --}}
+                <div class="table-responsive">   {{-- أبقه لو تريد الـ scroll فى الشاشات الصغيرة --}}
+                    <table class="table w-100 table-bordered table-hover align-middle custom-table">
+                        <thead class="table-light text-nowrap">
                         <tr>
-                            <th>التسلسل</th>
-                            <th>{!! sort_link('عنوان الحملة','title') !!}</th>
-                            <th>{!! sort_link('الفرع','branch') !!}</th>
-                            <th>{!! sort_link('تاريخ البداية','start_date') !!}</th>
-                            <th>{!! sort_link('تاريخ النهاية','end_date') !!}</th>
+                            <th>#</th>
+                            <th>{!! sort_link('عنوان الحملة','title')     !!}</th>
+                            <th>{!! sort_link('الفرع','branch_id')         !!}</th>
+                            <th>{!! sort_link('تاريخ البداية','start_date')!!}</th>
+                            <th>{!! sort_link('تاريخ النهاية','end_date')  !!}</th>
                             <th>المنظمون</th>
                             <th>المرفقات</th>
                             <th class="text-center">الإجراءات</th>
                         </tr>
                         </thead>
 
-                        <tbody>
-                        @foreach ($campaigns as $campaign)
+                        <tbody class="text-nowrap">
+                        @forelse ($campaigns as $campaign)
                             <tr>
                                 <td>{{ $loop->iteration + ($campaigns->currentPage()-1)*$campaigns->perPage() }}</td>
                                 <td>{{ $campaign->title }}</td>
-                                <td>{{ $campaign->branch }}</td>
+                                <td>{{ $campaign->branch?->name ?? '—' }}</td>
                                 <td>{{ optional($campaign->start_date)->format('Y-m-d') }}</td>
                                 <td>{{ optional($campaign->end_date)->format('Y-m-d') }}</td>
 
@@ -108,44 +109,39 @@
                                 <td>
                                     @forelse ($campaign->organizers ?? [] as $org)
                                         <span class="badge bg-light text-dark">{{ $org }}</span>
-                                        @empty &mdash; @endforelse
+                                        @empty &mdash;
+                                    @endforelse
                                 </td>
 
                                 {{-- المرفقات --}}
                                 <td>
                                     @forelse ($campaign->attachments ?? [] as $file)
-                                        <a href="{{ asset('storage/campaigns/'.$file) }}"
-                                           target="_blank" class="attachment-link d-block mb-1">
+                                        <a href="{{ asset('storage/campaigns/'.$file) }}" class="attachment-link d-block">
                                             <i class="fas fa-file-download"></i>
-                                            <span class="d-inline-block text-truncate" style="max-width: 90px">
-                                                {{ \Str::limit($file,15) }}
-                                            </span>
+                                            {{ \Str::limit($file,15) }}
                                         </a>
                                         @empty &mdash; @endforelse
                                 </td>
 
                                 {{-- الإجراءات --}}
                                 <td class="text-center">
-                                    @can('update',$campaign)
-                                        <a href="{{ route('campaigns.edit',$campaign) }}"
-                                           class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
-                                    @endcan
-                                    @can('delete',$campaign)
-                                        <form action="{{ route('campaigns.destroy',$campaign) }}" method="POST"
-                                              class="d-inline"
-                                              onsubmit="return confirm('حذف هذه الحملة؟');">
-                                            @csrf @method('DELETE')
-                                            <button class="btn btn-sm btn-danger">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    @endcan
+                                    <a href="{{ route('campaigns.edit',$campaign) }}" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('campaigns.destroy',$campaign) }}" method="POST" class="d-inline"
+                                          onsubmit="return confirm('حذف هذه الحملة؟');">
+                                        @csrf @method('DELETE')
+                                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                    </form>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr><td colspan="8" class="text-center">لا توجد حملات</td></tr>
+                        @endforelse
                         </tbody>
                     </table>
                 </div>
+
 
                 {{ $campaigns->withQueryString()->links() }}
             </div>

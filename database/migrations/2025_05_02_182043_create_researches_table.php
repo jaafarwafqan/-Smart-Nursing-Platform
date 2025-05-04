@@ -12,14 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('researches', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id();
             $table->unsignedBigInteger('branch_id')->nullable()->index();
-            $table->string('research_title');
-            $table->string('research_type', 120);
-            $table->date('start_date');
+            $table->string('research_title')->nullable();
+            $table->string('research_type', 120)->nullable();
+            $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
-            $table->string('status', 60);
+            $table->string('status', 60)->nullable();
             $table->text('description')->nullable();
+            $table->string('title')->nullable();
+            $table->text('abstract')->nullable();
+            $table->string('keywords')->nullable();
+            $table->string('file_path')->nullable();
+            $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -32,4 +37,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('researches');
     }
-};
+}; 

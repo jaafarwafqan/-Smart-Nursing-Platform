@@ -7,12 +7,10 @@
 
 <x-form.select name="branch_id" label="الفرع">
     @foreach($branches as $id => $name)
-        <option value="{{ $id }}"
-            @selected(old('branch_id', $event->branch_id ?? '') === $id)>
-            {{ $name }}
-        </option>
+        <option value="{{ $id }}" @selected(old('branch_id', $event->branch_id ?? '')==$id)>{{ $name }}</option>
     @endforeach
 </x-form.select>
+
 
 <x-form.input name="event_title" label="عنوان الفعالية"
               :value="old('event_title', $event->event_title ?? '')" />

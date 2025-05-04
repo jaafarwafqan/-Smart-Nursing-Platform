@@ -16,12 +16,14 @@ class UserController extends Controller
 {
     public function __construct(private UserServiceInterface $service)
     {
-        $this->authorizeResource(User::class, 'user');
+        $this->middleware('auth');
+        $this->middleware('permission:manage_users')->except(['profile', 'updateProfile', 'changePassword']);
     }
 
     public function index(Request $request)
     {
         $users = User::query()
+            ->with(['roles', 'branch'])
             ->when($request->search,     fn ($q, $s) => $q->whereFullText(['name', 'email'], $s))
             ->when($request->type,       fn ($q, $t) => $q->where('type', $t))
             ->when($request->branch_id,  fn ($q, $b) => $q->where('branch_id', $b))
@@ -58,40 +60,6 @@ class UserController extends Controller
             'roles'    => Role::pluck('name'),
         ]);
     }
-
-    public function profile(): View
-    {
-        return view('users.profile', [
-            'user' => auth()->user()
-        ]);
-    }
-
-    public function updateProfile(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . auth()->id(),
-        ]);
-
-        auth()->user()->update($request->only(['name', 'email']));
-
-        return back()->withSuccess('تم تحديث الملف الشخصي بنجاح');
-    }
-
-    public function changePassword(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'current_password' => 'required|current_password',
-            'new_password' => 'required|string|min:6|confirmed',
-        ]);
-
-        auth()->user()->update([
-            'password' => bcrypt($request->new_password)
-        ]);
-
-        return back()->withSuccess('تم تحديث كلمة المرور بنجاح');
-    }
-
     public function export(Request $request)
     {
         return (new \App\Exports\UsersExport($request->all()))->download('users.xlsx');

@@ -120,24 +120,19 @@
                                 </td>
 
                                 {{-- إجراءات --}}
+                                {{-- داخل جدول المستخدمين --}}
                                 <td class="text-center">
-                                    <div class="btn-group--icon">
-                                        {{-- تعديل --}}
-                                            <a href="{{ route('users.edit',$user) }}" class="btn btn-sm btn-warning" title="تعديل">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
+                                    @can('update',$user)
+                                        <x-button.edit :href="route('users.edit',$user)" />
+                                    @endcan
 
-                                        {{-- حذف --}}
-                                            @unless($user->is(auth()->user()))
-                                                <form action="{{ route('users.destroy',$user) }}" method="POST" class="d-inline">
-
-                                                    <button class="btn btn-sm btn-danger" title="حذف">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
-                                            @endunless
-                                    </div>
+                                    @can('delete',$user)
+                                        @if($user->id!==auth()->id())
+                                            <x-button.delete :action="route('users.destroy',$user)" :user="$user" />
+                                        @endif
+                                    @endcan
                                 </td>
+
 
                             </tr>
                         @empty

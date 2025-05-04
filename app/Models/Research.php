@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Research extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasFactory;
 
     protected $table = 'researches';
 
@@ -25,6 +26,11 @@ class Research extends Model
         'end_date',
         'status',          // جاري - مكتمل - موقوف
         'description',
+        'title',
+        'abstract',
+        'keywords',
+        'file_path',
+        'notes'
     ];
 
     protected $casts = [
@@ -40,6 +46,20 @@ class Research extends Model
     public function branch()
     {
         return $this->belongsTo(Branch::class);
+    }
+
+    public function students()
+    {
+        return $this->belongsToMany(Student::class)
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    public function professors()
+    {
+        return $this->belongsToMany(Professor::class)
+            ->withPivot('role')
+            ->withTimestamps();
     }
 
     /**
