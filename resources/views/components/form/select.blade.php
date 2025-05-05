@@ -1,7 +1,7 @@
 @props(['label','name'])
 
 <div class="mb-3">
-    <label for="{{ $name }}" class="form-label fw-semibold">{{ $label }}</label>
+    <label for="{{ $name }}" class="form-label fw-semibold">{!! $label !!}</label>
     <select {{ $attributes->merge([
             'class'=>'form-select '.($errors->has($name)?'is-invalid':''),
             'id'=>$name,

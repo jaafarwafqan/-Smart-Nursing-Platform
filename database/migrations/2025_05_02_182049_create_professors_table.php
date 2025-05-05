@@ -9,7 +9,7 @@ return new class extends Migration {
         Schema::create('professors', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->enum('gender', ['ذكر', 'أنثى']);
+            $table->enum('gender', ['ذكر', 'انثى']);
             $table->string('academic_rank')->nullable();
             $table->string('college')->nullable();
             $table->string('department')->nullable();
@@ -24,4 +24,4 @@ return new class extends Migration {
     {
         Schema::dropIfExists('professors');
     }
-}; 
+};

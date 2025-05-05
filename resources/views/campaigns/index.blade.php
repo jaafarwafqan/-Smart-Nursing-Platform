@@ -35,7 +35,7 @@
                             <i class="fas fa-plus"></i> إضافة حملة
                         </a>
                     <a href="{{ route('campaigns.export') }}" class="btn btn-sm btn-success">
-                        <i class="fas fa-file-excel"></i> تصدير Excel
+                        <i class="fas fa-file-excel"></i> تصدير Excel
                     </a>
                 </div>
             </div>

@@ -119,7 +119,7 @@ class DashboardController extends Controller
         $query = Event::query();
 
         if ($request->has('branch') && $request->branch != '') {
-            $query->where('branch', $request->branch);
+            $query->where('branch_id', $request->branch);
         }
         if ($request->has('from_date') && $request->from_date != '') {
             $query->whereDate('event_datetime', '>=', $request->from_date);
@@ -128,9 +128,9 @@ class DashboardController extends Controller
             $query->whereDate('event_datetime', '<=', $request->to_date);
         }
 
-        $events = $query->orderBy('event_datetime', 'desc')->paginate(10);
+        $events = $query->with('branch')->orderBy('event_datetime', 'desc')->paginate(10);
         $eventTypes = Event::distinct()->pluck('event_type');
-        $branches = Event::distinct()->pluck('branch');
+        $branches = Branch::all();
 
         return view('dashboard.report', compact('events', 'eventTypes', 'branches'));
     }
@@ -141,8 +141,8 @@ class DashboardController extends Controller
         $branches = Branch::all();
 
         foreach ($branches as $branch) {
-            $eventsQuery = Event::where('branch', $branch->name);
-            $campaignsQuery = Campaign::where('branch', $branch->name);
+            $eventsQuery = Event::where('branch_id', $branch->id);
+            $campaignsQuery = Campaign::where('branch_id', $branch->id);
 
             if ($year != 'all') {
                 $eventsQuery->whereYear('event_datetime', $year);

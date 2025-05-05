@@ -12,7 +12,7 @@
                     @csrf
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="name" class="form-label">الاسم الكامل</label>
+                            <label for="name" class="form-label"><i class="fas fa-user text-muted ms-1"></i> الاسم الكامل</label>
                             <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
                             @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -20,7 +20,7 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="email" class="form-label">البريد الإلكتروني</label>
+                            <label for="email" class="form-label"><i class="fas fa-envelope text-muted ms-1"></i> البريد الإلكتروني</label>
                             <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required>
                             @error('email')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -28,7 +28,7 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="password" class="form-label">كلمة المرور</label>
+                            <label for="password" class="form-label"><i class="fas fa-key text-muted ms-1"></i> كلمة المرور</label>
                             <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" required>
                             @error('password')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -36,12 +36,12 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="password_confirmation" class="form-label">تأكيد كلمة المرور</label>
+                            <label for="password_confirmation" class="form-label"><i class="fas fa-key text-muted ms-1"></i> تأكيد كلمة المرور</label>
                             <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="type" class="form-label">نوع المستخدم</label>
+                            <label for="type" class="form-label"><i class="fas fa-user-tag text-muted ms-1"></i> نوع المستخدم</label>
                             <select name="type" id="type" class="form-select @error('type') is-invalid @enderror" required>
                                 <option value="">اختر النوع</option>
                                 @foreach($types as $value => $label)
@@ -54,7 +54,7 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="branch_id" class="form-label">الفرع</label>
+                            <label for="branch_id" class="form-label"><i class="fas fa-code-branch text-muted ms-1"></i> الفرع</label>
                             <select name="branch_id" id="branch_id" class="form-select @error('branch_id') is-invalid @enderror">
                                 <option value="">اختر الفرع</option>
                                 @foreach($branches as $id => $name)
@@ -67,7 +67,7 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="roles" class="form-label">الأدوار</label>
+                            <label for="roles" class="form-label"><i class="fas fa-user-shield text-muted ms-1"></i> الأدوار</label>
                             <select name="roles[]" id="roles" class="form-select @error('roles') is-invalid @enderror" multiple>
                                 @foreach($roles as $id => $name)
                                     <option value="{{ $id }}" {{ in_array($id, old('roles', [])) ? 'selected' : '' }}>{{ $name }}</option>
@@ -79,7 +79,7 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="avatar" class="form-label">الصورة الشخصية</label>
+                            <label for="avatar" class="form-label"><i class="fas fa-image text-muted ms-1"></i> الصورة الشخصية</label>
                             <input type="file" name="avatar" id="avatar" class="form-control @error('avatar') is-invalid @enderror" accept="image/*">
                             @error('avatar')
                                 <div class="invalid-feedback">{{ $message }}</div>

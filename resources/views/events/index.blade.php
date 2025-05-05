@@ -5,6 +5,13 @@
 @section('content')
     <div class="container-fluid py-3">
 
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-1"></i> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="إغلاق"></button>
+            </div>
+        @endif
+
         {{-- بطاقات الإحصاء --}}
         <div class="row row-cols-1 row-cols-lg-4 g-3 mb-4">
             <div class="col">
@@ -29,7 +36,7 @@
                         <i class="fas fa-plus"></i> إضافة فعالية
                     </a>
                     <a href="{{ route('events.export') }}" class="btn btn-sm btn-success">
-                        <i class="fas fa-file-excel"></i> تصدير Excel
+                        <i class="fas fa-file-excel"></i> تصدير Excel
                     </a>
                 </div>
             </div>

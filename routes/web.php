@@ -37,6 +37,9 @@ Route::view('/login', 'auth.login')->name('login');
 Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard.index');
 
+Route::get('/dashboard/statistical', [App\Http\Controllers\DashboardController::class, 'statistical'])->name('dashboard.statistical');
+Route::get('/dashboard/report', [App\Http\Controllers\DashboardController::class, 'report'])->name('dashboard.report');
+
 /* 🔒 Routes محمية */
 Route::middleware('auth')->group(function () {
 

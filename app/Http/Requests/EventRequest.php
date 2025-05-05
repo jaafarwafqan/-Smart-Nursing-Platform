@@ -18,7 +18,7 @@ class EventRequest extends FormRequest
             'event_title' => 'required|string|max:255',
             'event_datetime' => 'required|date',
             'location' => 'required|string|max:255',
-            'branch' => 'required|string',
+            'branch_id' => 'required|exists:branches,id',
             'lecturers' => 'nullable|string',
             'attendance' => 'nullable|integer|min:0',
             'duration' => 'required|integer|min:0',
@@ -45,8 +45,8 @@ class EventRequest extends FormRequest
             'location.string' => 'موقع الفعالية يجب أن يكون نصاً',
             'location.max' => 'موقع الفعالية يجب أن لا يتجاوز 255 حرف',
             
-            'branch.required' => 'الفرع مطلوب',
-            'branch.string' => 'الفرع يجب أن يكون نصاً',
+            'branch_id.required' => 'الفرع مطلوب',
+            'branch_id.exists' => 'الفرع غير موجود',
             
             'lecturers.string' => 'أسماء المحاضرين يجب أن تكون نصاً',
             

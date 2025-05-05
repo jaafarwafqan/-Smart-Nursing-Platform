@@ -26,7 +26,7 @@ class EventController extends Controller
         $events = Event::query()
             ->when($request->event_type, fn($q,$v)=>$q->where('event_type',$v))
             ->when($request->event_title,fn($q,$v)=>$q->where('event_title','like',"%$v%"))
-            ->when($request->branch,    fn($q,$v)=>$q->where('branch',$v))
+            ->when($request->branch_id, fn($q,$v)=>$q->where('branch_id',$v))
             ->orderBy($request->get('sort','event_datetime'), $request->get('direction','desc'))
             ->paginate(15);
 

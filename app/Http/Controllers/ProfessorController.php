@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\StudentsImport;
 use App\Models\Professor;
 use App\Models\Research;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Validators\ValidationException;
 
 class ProfessorController extends Controller
 {
@@ -77,8 +79,19 @@ class ProfessorController extends Controller
     // تنفيذ الاستيراد
     public function import(Request $request)
     {
-        // Excel::import(new ProfessorsImport, $request->file('file'));
-        return redirect()->route('professors.index')->with('success', 'تم استيراد الأساتذة بنجاح');
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,csv',
+        ]);
+
+        try {
+            Excel::import(new StudentsImport, $request->file('file'));
+            return back()->withSuccess('تم الاستيراد بنجاح.');
+        } catch (ValidationException $e) {
+            $errors = collect($e->failures())->map(function($f){
+                return "الصف {$f->row()}: " . implode('، ', $f->errors());
+            });
+            return back()->withErrors($errors->all());
+        }
     }
 
     // تصدير الأساتذة إلى Excel
@@ -100,4 +113,4 @@ class ProfessorController extends Controller
         ]);
         return redirect()->route('professors.show', $professor)->with('success', 'تم ربط البحث بالأستاذ');
     }
-} 
+}

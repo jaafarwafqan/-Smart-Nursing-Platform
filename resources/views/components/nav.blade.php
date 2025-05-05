@@ -21,19 +21,40 @@
             {{-- الروابط الرئيسة --}}
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-lg-2">
                 @can('manage_events')
-                    <li class="nav-item"><a class="nav-link" href="{{ route('events.index') }}">الفعاليات</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('events.index') }}"><i class="fas fa-calendar-check me-1"></i> الفعاليات</a></li>
                 @endcan
                 @can('manage_campaigns')
-                    <li class="nav-item"><a class="nav-link" href="{{ route('campaigns.index') }}">الحملات</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('campaigns.index') }}"><i class="fas fa-bullhorn me-1"></i> الحملات</a></li>
                 @endcan
                 @can('manage_researches')
-                    <li class="nav-item"><a class="nav-link" href="{{ route('researches.index') }}">البحوث</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('researches.index') }}"><i class="fas fa-flask me-1"></i> البحوث</a></li>
                 @endcan
-                <li class="nav-item"><a class="nav-link" href="{{ route('students.index') }}">الطلاب</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('professors.index') }}">الأساتذة</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('dashboard.index') }}">التقارير</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('students.index') }}"><i class="fas fa-user-graduate me-1"></i> الطلاب</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('professors.index') }}"><i class="fas fa-chalkboard-teacher me-1"></i> الأساتذة</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="reportsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        التقارير
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="reportsDropdown">
+                        <li>
+                            <a class="dropdown-item" href="{{ route('dashboard.index') }}">
+                                الاحصائيات العامة
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('dashboard.statistical') }}">
+                                التقارير التفصيلية
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('dashboard.report') }}">
+                                تقرير مخصص
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 @can('manage_users')
-                    <li class="nav-item"><a class="nav-link" href="{{ route('users.index') }}">المستخدمون</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('users.index') }}"><i class="fas fa-users me-1"></i> المستخدمون</a></li>
                 @endcan
                 <li class="nav-item"><a class="nav-link" href="{{ route('about') }}">حول النظام</a></li>
             </ul>
