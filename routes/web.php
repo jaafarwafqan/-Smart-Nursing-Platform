@@ -57,6 +57,7 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('permission:manage_researches')->resource('researches', ResearchController::class);
     Route::get('researches/{research}/download', [ResearchController::class, 'download'])->name('researches.download');
+    Route::get('researches/export', [ResearchController::class, 'export'])->name('researches.export');
 
     Route::middleware('permission:manage_users')->resource('users', UserController::class);
     Route::get('users/{user}/attachments', [UserController::class, 'attachments'])

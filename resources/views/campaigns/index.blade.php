@@ -85,7 +85,7 @@
                     <table class="table w-100 table-bordered table-hover align-middle custom-table">
                         <thead class="table-light text-nowrap">
                         <tr>
-                            <th>#</th>
+                            <th>التسلسل</th>
                             <th>{!! sort_link('عنوان الحملة','title')     !!}</th>
                             <th>{!! sort_link('الفرع','branch_id')         !!}</th>
                             <th>{!! sort_link('تاريخ البداية','start_date')!!}</th>

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redirect;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\StudentsImport;
 
 class StudentController extends Controller
 {
@@ -91,8 +92,10 @@ class StudentController extends Controller
     // تنفيذ الاستيراد
     public function import(Request $request)
     {
-        // هنا تضع كود الاستيراد باستخدام Laravel Excel
-        // Excel::import(new StudentsImport, $request->file('file'));
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls',
+        ]);
+        Excel::import(new StudentsImport, $request->file('file'));
         return redirect()->route('students.index')->with('success', 'تم استيراد الطلاب بنجاح');
     }
 

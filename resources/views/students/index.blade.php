@@ -65,14 +65,14 @@
                     <thead class="table-light">
                         <tr>
                             <th>#</th>
-                            <th>الاسم</th>
-                            <th>الجنس</th>
-                            <th>تاريخ الميلاد</th>
-                            <th>الرقم الجامعي</th>
-                            <th>نوع الدراسة</th>
-                            <th>سنة الدراسة/البرنامج</th>
-                            <th>الهاتف</th>
-                            <th>البريد الإلكتروني</th>
+                            <th>{!! sort_link('الاسم','name') !!}</th>
+                            <th>{!! sort_link('الجنس','gender') !!}</th>
+                            <th>{!! sort_link('تاريخ الميلاد','birthdate') !!}</th>
+                            <th>{!! sort_link('الرقم الجامعي','university_number') !!}</th>
+                            <th>{!! sort_link('نوع الدراسة','study_type') !!}</th>
+                            <th>{!! sort_link('سنة الدراسة/البرنامج','study_year') !!}</th>
+                            <th>{!! sort_link('الهاتف','phone') !!}</th>
+                            <th>{!! sort_link('البريد الإلكتروني','email') !!}</th>
                             <th class="text-center">الإجراءات</th>
                         </tr>
                     </thead>

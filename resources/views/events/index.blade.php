@@ -134,9 +134,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center">
-                                    <i class="fas fa-inbox fa-2x mb-2"></i><br>لا توجد فعاليات
-                                </td>
+                                <td colspan="8" class="text-center">لا توجد فعاليات</td>
                             </tr>
                         @endforelse
                         </tbody>

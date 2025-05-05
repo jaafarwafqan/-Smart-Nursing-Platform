@@ -8,6 +8,8 @@ use App\Models\Professor;
 use App\Services\ResearchService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ResearchesExport;
 
 class ResearchController extends Controller
 {
@@ -19,7 +21,14 @@ class ResearchController extends Controller
     public function index()
     {
         $researches = Research::with(['students', 'professors'])->latest()->paginate(10);
-        return view('researches.index', compact('researches'));
+        // إحصائيات البحوث
+        $stats = [
+            'total' => Research::count(),
+            'in_progress' => Research::where('status', Research::STATUS_IN_PROGRESS)->count(),
+            'completed' => Research::where('status', Research::STATUS_COMPLETED)->count(),
+            'cancelled' => Research::where('status', Research::STATUS_CANCELLED)->count(),
+        ];
+        return view('researches.index', compact('researches', 'stats'));
     }
 
     public function create()
@@ -160,5 +169,10 @@ class ResearchController extends Controller
             return back()->with('error', 'لا يوجد ملف للبحث');
         }
         return Storage::download($research->file_path);
+    }
+
+    public function export()
+    {
+        return Excel::download(new ResearchesExport, 'researches.xlsx');
     }
 }
