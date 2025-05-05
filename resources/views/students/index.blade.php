@@ -51,7 +51,7 @@
                     <x-form.select name="gender" label="الجنس">
                         <option value="">الكل</option>
                         <option value="ذكر" @selected(request('gender')=='ذكر')>ذكر</option>
-                        <option value="أنثى" @selected(request('gender')=='أنثى')>أنثى</option>
+                        <option value="انثى" @selected(request('gender')=='انثى')>أنثى</option>
                     </x-form.select>
                 </div>
                 <div class="col-md-3 d-flex align-items-end">
@@ -107,4 +107,4 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection

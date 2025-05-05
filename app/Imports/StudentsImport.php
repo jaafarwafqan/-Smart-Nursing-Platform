@@ -3,33 +3,80 @@
 namespace App\Imports;
 
 use App\Models\Student;
+use Illuminate\Support\Carbon;
+use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithValidation;
 
-class StudentsImport implements ToModel, WithHeadingRow
+class StudentsImport implements ToModel, WithHeadingRow, WithValidation
 {
     public function model(array $row)
     {
-        $name = $row['name'] ?? $row['الاسم'] ?? null;
-        $gender = $row['gender'] ?? $row['الجنس'] ?? null;
-        $study_type = $row['study_type'] ?? $row['نوع الدراسة'] ?? $row['نوع_الدراسة'] ?? null;
+        // ➤ 1) تطبيع الجنس
+        $gender = trim($row['gender']);
+        if ($gender === 'انثى') {       // بدون همزة
+            $gender = 'انثى';
+        } elseif ($gender !== 'ذكر') {
+            // بدلًا من رمي خطأ null، يمكنك افتراض ذكر أو تجاهل الصف
+            $gender = 'ذكر';
+        }
 
-        // تجاهل الصف إذا لم يوجد اسم أو جنس أو نوع دراسة
-        if (!$name || !$gender || !$study_type) {
-            return null;
+        // ➤ 2) تطبيع نوع الدراسة
+        $rawType = trim($row['study_type']);
+        $studyType = match ($rawType) {
+            'اولية', 'أولية'    => 'أولية',
+            'ماجستير'           => 'ماجستير',
+            'دكتوراه'           => 'دكتوراه',
+            default             => null,
+        };
+
+        // ➤ 3) معالجة تاريخ الميلاد
+        $birthRaw = trim($row['birthdate']);
+
+        if (is_numeric($birthRaw)) {
+            // إن كان رقم Excel Serial
+            $birthdate = ExcelDate::excelToDateTimeObject($birthRaw)->format('Y-m-d');
+        } elseif (strpos($birthRaw, '\\') !== false) {
+            // إن كانت بصيغة "YYYY\MM\DD"
+            $birthdate = Carbon::parse(str_replace('\\','/',$birthRaw))->format('Y-m-d');
+        } elseif ($birthRaw) {
+            // أي صيغة أخرى صالحة
+            $birthdate = Carbon::parse($birthRaw)->format('Y-m-d');
+        } else {
+            $birthdate = null;
         }
 
         return new Student([
-            'name' => $name,
-            'gender' => $gender,
-            'birthdate' => $row['birthdate'] ?? $row['تاريخ الميلاد'] ?? $row['تاريخ_الميلاد'] ?? null,
-            'university_number' => $row['university_number'] ?? $row['الرقم الجامعي'] ?? $row['الرقم_الجامعي'] ?? null,
-            'study_type' => $study_type,
-            'study_year' => $row['study_year'] ?? $row['سنة الدراسة'] ?? $row['سنة_الدراسة'] ?? null,
-            'program' => $row['program'] ?? $row['البرنامج'] ?? null,
-            'phone' => $row['phone'] ?? $row['الهاتف'] ?? null,
-            'email' => $row['email'] ?? $row['البريد الإلكتروني'] ?? $row['البريد_الإلكتروني'] ?? null,
-            'notes' => $row['notes'] ?? $row['ملاحظات'] ?? null,
+            'name'             => $row['name'],
+            'gender'           => $gender,
+            'birthdate'        => isset($row['birthdate']) ? Carbon::parse($row['birthdate']) : null,
+            'university_number'=> $row['university_number'] ?: null,
+            'study_type'       => $row['study_type'],
+            'study_year'       => $row['study_year'] ?: null,
+            'program'          => $row['program'] ?: null,
+            'phone'            => $row['phone'] ?: null,
+            'email'            => $row['email'] ?: null,
+            'notes'            => $row['notes'] ?: null,
         ]);
     }
-} 
+
+    public function rules(): array
+    {
+        return [
+            'name'              => 'required|string',
+            'gender'            => 'required|in:ذكر,انثى',
+            'university_number' => 'required|unique:students,university_number',
+            'study_type'        => 'required|in:أولية,ماجستير,دكتوراه',
+            'email'             => 'nullable|email',
+        ];
+    }
+
+    public function customValidationMessages(): array
+    {
+        return [
+            'gender.in'     => 'حقل الجنس يجب أن يكون "ذكر" أو "انثى".',
+            'study_type.in' => 'حقل نوع الدراسة يجب أن يكون "أولية" أو "ماجستير" أو "دكتوراه".',
+        ];
+    }
+}

@@ -16,7 +16,7 @@
                     <select name="gender" class="form-select" required>
                         <option value="">اختر</option>
                         <option value="ذكر" @selected(old('gender')=='ذكر')>ذكر</option>
-                        <option value="أنثى" @selected(old('gender')=='أنثى')>أنثى</option>
+                        <option value="انثى" @selected(old('gender')=='انثى')>انثى</option>
                     </select>
                 </div>
                 <div class="col-md-3">

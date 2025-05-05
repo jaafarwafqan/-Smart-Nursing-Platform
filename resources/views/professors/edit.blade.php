@@ -22,7 +22,13 @@
             </div>
             <div class="col-md-3">
                 <label class="form-label">الرتبة العلمية</label>
-                <input type="text" name="academic_rank" class="form-control" value="{{ old('academic_rank', $professor->academic_rank) }}">
+                <select name="academic_rank" class="form-select" required>
+                    <option value="">اختر</option>
+                    <option value="مدرس" @selected(old('academic_rank', $professor->academic_rank)=='مدرس')>مدرس</option>
+                    <option value="مدرس مساعد" @selected(old('academic_rank', $professor->academic_rank)=='مدرس مساعد')>مدرس مساعد</option>
+                    <option value="أستاذ" @selected(old('academic_rank', $professor->academic_rank)=='أستاذ')>أستاذ</option>
+                    <option value="أستاذ مساعد" @selected(old('academic_rank', $professor->academic_rank)=='أستاذ مساعد')>أستاذ مساعد</option>
+                </select>
             </div>
             <div class="col-md-4">
                 <label class="form-label">الكلية</label>

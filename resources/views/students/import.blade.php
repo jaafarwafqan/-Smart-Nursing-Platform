@@ -9,7 +9,7 @@
         يجب أن يحتوي ملف Excel على الأعمدة التالية:<br>
         <ul>
             <li><strong>name</strong> (اسم الطالب) <span class="text-danger">إجباري</span></li>
-            <li><strong>gender</strong> (الجنس: ذكر/أنثى) <span class="text-danger">إجباري</span></li>
+            <li><strong>gender</strong> (الجنس: ذكر/انثى) <span class="text-danger">إجباري</span></li>
             <li><strong>study_type</strong> (نوع الدراسة: أولية/ماجستير/دكتوراه) <span class="text-danger">إجباري</span></li>
             <li>birthdate (تاريخ الميلاد: yyyy-mm-dd) <span class="text-muted">اختياري</span></li>
             <li>university_number (الرقم الجامعي) <span class="text-muted">اختياري</span></li>
@@ -31,4 +31,4 @@
         <a href="{{ route('students.index') }}" class="btn btn-secondary">إلغاء</a>
     </form>
 </div>
-@endsection 
+@endsection

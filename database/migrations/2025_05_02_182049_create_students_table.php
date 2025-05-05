@@ -9,7 +9,7 @@ return new class extends Migration {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->enum('gender', ['ذكر', 'أنثى']);
+            $table->enum('gender', ['ذكر', 'انثى']);
             $table->date('birthdate')->nullable();
             $table->string('university_number')->nullable();
             $table->enum('study_type', ['أولية', 'ماجستير', 'دكتوراه']);

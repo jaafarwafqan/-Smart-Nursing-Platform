@@ -17,7 +17,7 @@
                 <select name="gender" class="form-select" required>
                     <option value="">اختر</option>
                     <option value="ذكر" @selected(old('gender', $student->gender)=='ذكر')>ذكر</option>
-                    <option value="أنثى" @selected(old('gender', $student->gender)=='أنثى')>أنثى</option>
+                    <option value="انثى" @selected(old('gender', $student->gender)=='انثى')>أنثى</option>
                 </select>
             </div>
             <div class="col-md-3">
@@ -73,4 +73,4 @@
     document.getElementById('study_type_select').addEventListener('change', toggleFields);
     window.onload = toggleFields;
 </script>
-@endsection 
+@endsection

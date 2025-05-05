@@ -28,8 +28,8 @@ class Student extends Model
 
     public function researches()
     {
-        return $this->belongsToMany(Research::class)
-            ->withPivot('role')
+        return $this->belongsToMany(Research::class, 'student_researches')
+            ->withPivot(['role', 'study_type', 'status'])
             ->withTimestamps();
     }
 } 

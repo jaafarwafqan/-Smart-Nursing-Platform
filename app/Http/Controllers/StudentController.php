@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redirect;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\StudentsImport;
+use Maatwebsite\Excel\Validators\ValidationException;
+
 
 class StudentController extends Controller
 {
@@ -25,7 +27,7 @@ class StudentController extends Controller
             'total'    => Student::count(),
             'ug'       => Student::where('study_type', 'أولية')->count(),
             'pg'       => Student::whereIn('study_type', ['ماجستير', 'دكتوراه'])->count(),
-            'female'   => Student::where('gender', 'أنثى')->count(),
+            'female'   => Student::where('gender', 'انثى')->count(),
         ];
 
         return view('students.index', compact('students', 'stats'));
@@ -93,10 +95,18 @@ class StudentController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'file' => 'required|file|mimes:xlsx,xls',
+            'file' => 'required|file|mimes:xlsx,csv',
         ]);
-        Excel::import(new StudentsImport, $request->file('file'));
-        return redirect()->route('students.index')->with('success', 'تم استيراد الطلاب بنجاح');
+
+        try {
+            Excel::import(new StudentsImport, $request->file('file'));
+            return back()->withSuccess('تم الاستيراد بنجاح.');
+        } catch (ValidationException $e) {
+            $errors = collect($e->failures())->map(function($f){
+                return "الصف {$f->row()}: " . implode('، ', $f->errors());
+            });
+            return back()->withErrors($errors->all());
+        }
     }
 
     // تصدير الطلاب إلى Excel
@@ -122,4 +132,4 @@ class StudentController extends Controller
         ]);
         return redirect()->route('students.show', $student)->with('success', 'تم ربط البحث بالطالب');
     }
-} 
+}
