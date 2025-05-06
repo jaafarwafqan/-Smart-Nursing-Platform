@@ -10,7 +10,7 @@
     @endforeach
 </x-form.select>
 
-<x-form.input name="research_title" label='<i class="fas fa-heading text-muted ms-1"></i> عنوان البحث' :value="old('research_title', $research->research_title ?? $research->title ?? '')" />
+<x-form.input name="title" label='<i class="fas fa-heading text-muted ms-1"></i> عنوان البحث' :value="old('title', $research->title ?? '')" />
 
 <x-form.input name="research_type" label='<i class="fas fa-list text-muted ms-1"></i> نوع البحث'
               :value="old('research_type', $research->research_type ?? '')" />
@@ -18,11 +18,11 @@
 <x-form.input type="date" name="start_date" label='<i class="fas fa-calendar-plus text-muted ms-1"></i> تاريخ البدء'
               :value="old('start_date', $research->start_date ?? '')" />
 
-<x-form.input type="date" name="end_date" label='<i class="fas fa-calendar-check text-muted ms-1"></i> تاريخ الانتهاء'
-              :value="old('end_date', $research->end_date ?? '')" />
-
-<x-form.input name="status" label='<i class="fas fa-flag-checkered text-muted ms-1"></i> الحالة (جاري/مكتمل/موقوف)'
-              :value="old('status', $research->status ?? '')" />
+<x-form.select name="status" label='<i class="fas fa-flag-checkered text-muted ms-1"></i> الحالة'>
+    <option value="in_progress" @selected(old('status', $research->status ?? '') == 'in_progress')>جاري</option>
+    <option value="completed" @selected(old('status', $research->status ?? '') == 'completed')>مكتمل</option>
+    <option value="cancelled" @selected(old('status', $research->status ?? '') == 'cancelled')>موقوف</option>
+</x-form.select>
 
 <x-form.textarea name="description" label='<i class="fas fa-align-right text-muted ms-1"></i> الوصف'>
     {{ old('description', $research->description ?? '') }}

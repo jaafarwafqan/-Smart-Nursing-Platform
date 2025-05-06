@@ -36,16 +36,19 @@ class UserPolicy
 
     public function update(User $user, User $model): bool
     {
+        // لا تسمح بتعديل مدير النظام الرئيسي فقط
+        if ($model->email === 'jaafar1@jaafar1.com') {
+            return false;
+        }
         return $user->can('manage_users');
     }
 
     public function delete(User $user, User $model): bool
     {
-        // لا تسمح للمستخدم بحذف نفسه
-        if ($user->is($model)) {
+        // لا تسمح للمستخدم بحذف نفسه أو حذف مدير النظام الرئيسي فقط
+        if ($user->is($model) || $model->email === 'jaafar1@jaafar1.com') {
             return false;
         }
-
         return $user->can('manage_users');
     }
 }

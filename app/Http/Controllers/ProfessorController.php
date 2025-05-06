@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Imports\StudentsImport;
+use App\Imports\ProfessorsImport;
 use App\Models\Professor;
 use App\Models\Research;
 use Illuminate\Http\Request;
@@ -17,7 +17,15 @@ class ProfessorController extends Controller
             ->when($request->input('search'), fn($q, $s) => $q->where('name', 'like', "%$s%"))
             ->orderBy('id', 'desc')
             ->paginate(20);
-        return view('professors.index', compact('professors'));
+
+        $stats = [
+            'total'      => Professor::count(),
+            'professors' => Professor::where('academic_rank', 'أستاذ')->count(),
+            'assistants' => Professor::where('academic_rank', 'أستاذ مساعد')->count(),
+            'female'     => Professor::where('gender', 'أنثى')->count(),
+        ];
+
+        return view('professors.index', compact('professors', 'stats'));
     }
 
     public function create()
@@ -84,7 +92,7 @@ class ProfessorController extends Controller
         ]);
 
         try {
-            Excel::import(new StudentsImport, $request->file('file'));
+            Excel::import(new ProfessorsImport, $request->file('file'));
             return back()->withSuccess('تم الاستيراد بنجاح.');
         } catch (ValidationException $e) {
             $errors = collect($e->failures())->map(function($f){

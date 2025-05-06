@@ -5,17 +5,18 @@ use App\Models\Professor;
 use Illuminate\Support\Carbon;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithValidation;
 
-class ProfessorsImport implements ToModel, WithHeadingRow
+class ProfessorsImport implements ToModel, WithHeadingRow, WithValidation
 {
     public function model(array $row)
     {
         // تطبيع قيمة الجنس
         $gender = trim($row['gender']);
-        if ($gender === 'انثى') {
+        if ($gender === 'انثى' || $gender === 'أنثى') {
             $gender = 'أنثى';
-        } elseif ($gender !== 'ذكر' && $gender !== 'نثى') {
-            $gender = null;
+        } else {
+            $gender = 'ذكر';
         }
 
         return new Professor([
@@ -29,5 +30,22 @@ class ProfessorsImport implements ToModel, WithHeadingRow
             'email'     => $row['email'] ?? null,
             'notes'     => $row['notes'] ?? null,
         ]);
+    }
+
+    public function rules(): array
+    {
+        return [
+            'name'   => 'required|string',
+            'gender' => 'required|in:ذكر,انثى,أنثى',
+            'email'  => 'nullable|email',
+        ];
+    }
+
+    public function customValidationMessages(): array
+    {
+        return [
+            'gender.in' => 'حقل الجنس يجب أن يكون "ذكر" أو "انثى".',
+            'name.required' => 'اسم الأستاذ مطلوب.',
+        ];
     }
 }

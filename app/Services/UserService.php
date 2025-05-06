@@ -6,6 +6,7 @@ use App\Contracts\UserServiceInterface;
 use App\Models\User;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UserService implements UserServiceInterface
 {
@@ -16,7 +17,9 @@ class UserService implements UserServiceInterface
     {
         return DB::transaction(function () use ($data) {
             $attachments = Arr::pull($data, 'attachments', []);
-
+            if (isset($data['password'])) {
+                $data['password'] = Hash::make($data['password']);
+            }
             $user = User::create($data);
 
             foreach ($attachments as $file) {

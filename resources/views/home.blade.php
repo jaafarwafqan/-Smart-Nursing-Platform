@@ -18,6 +18,7 @@
         <div class="position-absolute top-0 start-0 w-100 h-100" style="background: url('{{ asset('images/hero-shape.svg') }}') center/cover no-repeat; opacity: 0.2;"></div>
     </div>
 
+    @auth
     <div class="container my-5">
         {{-- إحصائيات سريعة --}}
         <div class="row g-4 mb-5 text-center">
@@ -101,6 +102,13 @@
             @endcan
         </div>
     </div>
+    @else
+    <div class="container my-5">
+        <div class="alert alert-info text-center shadow-sm" role="alert">
+            مرحباً بك في منصة التمريض الذكية! يرجى تسجيل الدخول للاستفادة من جميع ميزات النظام وإدارة الحملات والفعاليات والبحوث.
+        </div>
+    </div>
+    @endauth
 
     @push('styles')
         <style>

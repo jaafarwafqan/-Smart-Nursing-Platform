@@ -2,7 +2,12 @@
 @section('title','البحوث')
 
 @section('content')
-    <div class="container">
+    <div class="container-fluid">
+        <style>
+            .table-responsive { overflow-x: unset; }
+            table { width: 100%; table-layout: auto; }
+            th, td { white-space: normal; word-break: break-word; }
+        </style>
         {{-- بطاقات الإحصائيات --}}
         <div class="row row-cols-1 row-cols-lg-4 g-3 mb-4">
             <div class="col">
@@ -92,9 +97,15 @@
                                         @endforeach
                                     </td>
                                     <td>
-                                        <span class="badge bg-{{ $research->status == 'pending' ? 'warning' : ($research->status == 'approved' ? 'success' : ($research->status == 'completed' ? 'info' : 'danger')) }}">
-                                            {{ $research->status }}
-                                        </span>
+                                        @if($research->status == 'in_progress')
+                                            <span class="badge bg-warning">جاري</span>
+                                        @elseif($research->status == 'completed')
+                                            <span class="badge bg-info">مكتمل</span>
+                                        @elseif($research->status == 'cancelled')
+                                            <span class="badge bg-danger">موقوف</span>
+                                        @else
+                                            <span class="badge bg-secondary">غير محدد</span>
+                                        @endif
                                     </td>
                                     <td>
                                         @if($research->file_path)
@@ -107,9 +118,6 @@
                                     </td>
                                     <td>
                                         <div class="btn-group">
-                                            <a href="{{ route('researches.show', $research) }}" class="btn btn-sm btn-info">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
                                             <a href="{{ route('researches.edit', $research) }}" class="btn btn-sm btn-primary">
                                                 <i class="fas fa-edit"></i>
                                             </a>

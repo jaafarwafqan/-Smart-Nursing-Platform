@@ -44,20 +44,26 @@ class UserController extends Controller
     }
     public function create(): View
     {
+        $roles = \Spatie\Permission\Models\Role::with('permissions')->get();
+        $rolesForSelect = $roles->pluck('name', 'id');
         return view('users.create', [
             'types'    => config('types.user_types', []),
-            'branches' => Branch::pluck('name', 'id'),
-            'roles'    => Role::pluck('name'),
+            'branches' => \App\Models\Branch::pluck('name', 'id'),
+            'roles'    => $rolesForSelect,
+            'rolesData' => $roles,
         ]);
     }
 
     public function edit(User $user): View
     {
+        $roles = \Spatie\Permission\Models\Role::with('permissions')->get();
+        $rolesForSelect = $roles->pluck('name', 'id');
         return view('users.edit', [
             'user'     => $user,
             'types'    => config('types.user_types', []),
-            'branches' => Branch::pluck('name', 'id'),
-            'roles'    => Role::pluck('name'),
+            'branches' => \App\Models\Branch::pluck('name', 'id'),
+            'roles'    => $rolesForSelect,
+            'rolesData' => $roles,
         ]);
     }
     public function export(Request $request)
@@ -69,7 +75,7 @@ class UserController extends Controller
     public function store(StoreUserRequest $request): RedirectResponse
     {
         $user = $this->service->create($request->validated());
-        return to_route('users.show', $user)->withSuccess('تمّ إنشاء المستخدم');
+        return to_route('users.index')->withSuccess('تمّ إنشاء المستخدم');
     }
 
 
@@ -85,5 +91,33 @@ class UserController extends Controller
     {
         $this->service->delete($user);
         return to_route('users.index')->withSuccess('تمّ الحذف');
+    }
+
+    // ====== دوال الملف الشخصي ======
+    public function profile(Request $request)
+    {
+        return view('users.profile', ['user' => $request->user()]);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            // أضف الحقول الأخرى حسب الحاجة
+        ]);
+        $user->update($data);
+        return back()->with('success', 'تم تحديث البيانات بنجاح');
+    }
+
+    public function changePassword(Request $request)
+    {
+        $user = $request->user();
+        $data = $request->validate([
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+        $user->update(['password' => bcrypt($data['password'])]);
+        return back()->with('success', 'تم تغيير كلمة المرور بنجاح');
     }
 }

@@ -27,6 +27,7 @@ class BranchesTableSeeder extends Seeder
             'شؤون المرأة',
             'حقوق الإنسان',
             'الدراسات العليا',
+            'طلاب',
         ];
 
         foreach ($branches as $name) {

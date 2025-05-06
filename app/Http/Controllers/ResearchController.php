@@ -35,7 +35,8 @@ class ResearchController extends Controller
     {
         $students = Student::all();
         $professors = Professor::all();
-        return view('researches.create', compact('students', 'professors'));
+        $branches = \App\Models\Branch::pluck('name', 'id');
+        return view('researches.create', compact('students', 'professors', 'branches'));
     }
 
     public function store(Request $request)
@@ -52,6 +53,7 @@ class ResearchController extends Controller
             'professors' => 'required|array',
             'professors.*' => 'exists:professors,id',
             'professor_roles' => 'required|array',
+            'status' => 'required|string',
         ]);
 
         $research = Research::create([
@@ -61,6 +63,7 @@ class ResearchController extends Controller
             'abstract' => $validated['abstract'],
             'keywords' => $validated['keywords'],
             'notes' => $validated['notes'],
+            'status' => $validated['status'],
         ]);
 
         if ($request->hasFile('file')) {

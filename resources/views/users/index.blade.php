@@ -79,6 +79,9 @@
                             'admin'     => 'danger',
                             'professor' => 'primary',
                             'student'   => 'success',
+                            'employee'  => 'info',
+                            'other'     => 'secondary',
+
                         ];
                     @endphp
 
@@ -122,15 +125,18 @@
                                 {{-- إجراءات --}}
                                 {{-- داخل جدول المستخدمين --}}
                                 <td class="text-center">
-                                    @can('update',$user)
-                                        <x-button.edit :href="route('users.edit',$user)" />
-                                    @endcan
-
-                                    @can('delete',$user)
-                                        @if($user->id!==auth()->id())
-                                            <x-button.delete :action="route('users.destroy',$user)" :user="$user" />
-                                        @endif
-                                    @endcan
+                                    @if($user->email !== 'jaafar1@jaafar1.com')
+                                        @can('update',$user)
+                                            <x-button.edit :href="route('users.edit',$user)" />
+                                        @endcan
+                                        @can('delete',$user)
+                                            @if($user->id!==auth()->id())
+                                                <x-button.delete :action="route('users.destroy',$user)" :user="$user" />
+                                            @endif
+                                        @endcan
+                                    @else
+                                        <span class="badge bg-secondary">مدير النظام</span>
+                                    @endif
                                 </td>
 
 

@@ -21,7 +21,7 @@ class StoreUserRequest extends FormRequest
             'password'  => $id ? 'nullable|string|min:6|confirmed' : 'required|string|min:6|confirmed',
             'branch_id' => 'required|exists:branches,id',
             'roles'     => 'array',
-            'roles.*'   => 'exists:roles,name',
+            'roles.*'   => 'exists:roles,id',
         ];
     }
 }

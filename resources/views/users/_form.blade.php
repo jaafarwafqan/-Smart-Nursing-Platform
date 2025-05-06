@@ -46,15 +46,19 @@
     </x-form.select>
 
     {{-- الأدوار (Spatie) --}}
-    <select name="roles[]" class="form-select select-roles" multiple>
-        @foreach($roles as $role)
-            <option value="{{ $role }}"
-                @selected(collect(old('roles',$user?->roles->pluck('name') ?? []))->contains($role))>
-                {{ $role }}
+    <select name="roles[]" id="roles" class="form-select select-roles" multiple>
+        @foreach($roles as $id => $name)
+            <option value="{{ $id }}"
+                @selected(collect(old('roles',$user?->roles->pluck('id') ?? []))->contains($id))>
+                {{ $name }}
             </option>
         @endforeach
     </select>
 
+    <!-- عرض الصلاحيات المرتبطة بالأدوار المختارة -->
+    <div class="col-12 mb-3">
+        <div id="role-permissions" class="alert alert-info" style="display:none;"></div>
+    </div>
 
 </div>
 
@@ -63,3 +67,54 @@
     <x-button.primary><i class="fas fa-save"></i> {{ $isEdit ? 'تحديث' : 'حفظ' }}</x-button.primary>
     <a href="{{ route('users.index') }}" class="btn btn-secondary ms-2">رجوع</a>
 </div>
+
+@push('scripts')
+<script>
+    // بيانات الأدوار مع الصلاحيات من السيرفر (يجب تمريرها من الكنترولر)
+    const rolesData = @json($rolesData ?? []);
+    // ترجمة الصلاحيات
+    const permTrans = {
+        'manage_campaigns': 'إدارة الحملات',
+        'manage_events': 'إدارة الفعاليات',
+        'manage_researches': 'إدارة الأبحاث',
+        'manage_proposals': 'إدارة المقترحات',
+        'manage_users': 'إدارة المستخدمين',
+        'manage_reports': 'إدارة التقارير',
+        'system_admin': 'مدير النظام',
+    };
+    function translatePermission(perm) {
+        return permTrans[perm] ?? perm;
+    }
+    function updatePermissions() {
+        let selected = Array.from(document.getElementById('roles').selectedOptions).map(opt => opt.value);
+        let html = '';
+        if (selected.length === 0) {
+            html = '<span class="text-muted">يرجى اختيار دور لعرض الصلاحيات المرتبطة به.</span>';
+        } else {
+            rolesData.forEach(role => {
+                if (selected.includes(role.id.toString())) {
+                    html += `<div class='mb-2'><strong><i class='fas fa-user-shield text-primary'></i> ${role.name}:</strong><ul style='margin-bottom:0;'>`;
+                    if (role.permissions.length === 0) {
+                        html += '<li><em>لا توجد صلاحيات</em></li>';
+                    } else {
+                        role.permissions.forEach(perm => {
+                            html += `<li><i class='fas fa-check-circle text-success'></i> ${translatePermission(perm.name)}</li>`;
+                        });
+                    }
+                    html += '</ul></div>';
+                }
+            });
+        }
+        const box = document.getElementById('role-permissions');
+        if (html) {
+            box.innerHTML = html;
+            box.style.display = 'block';
+        } else {
+            box.innerHTML = '';
+            box.style.display = 'none';
+        }
+    }
+    document.getElementById('roles').addEventListener('change', updatePermissions);
+    document.addEventListener('DOMContentLoaded', updatePermissions);
+</script>
+@endpush

@@ -89,12 +89,18 @@
                             <td>{{ $professor->phone }}</td>
                             <td>{{ $professor->email }}</td>
                             <td class="text-center">
-                                <a href="{{ route('professors.edit', $professor) }}" class="btn btn-sm btn-warning">تعديل</a>
-                                <form action="{{ route('professors.destroy', $professor) }}" method="POST" style="display:inline-block">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-sm btn-danger" onclick="return confirm('هل أنت متأكد من الحذف؟')">حذف</button>
-                                </form>
+                                <div class="btn-group">
+                                    <a href="{{ route('professors.edit', $professor) }}" class="btn btn-sm btn-warning" title="تعديل">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('professors.destroy', $professor) }}" method="POST" style="display:inline-block">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-sm btn-danger" onclick="return confirm('هل أنت متأكد من الحذف؟')" title="حذف">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         @empty
