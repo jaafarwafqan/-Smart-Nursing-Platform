@@ -9,11 +9,15 @@ use App\Models\Event;
 use App\Models\Campaign;
 use App\Models\Research;
 use App\Models\User;
+use App\Models\Teacher;
+use App\Models\Student;
 
 use App\Policies\EventPolicy;
 use App\Policies\CampaignPolicy;
 use App\Policies\ResearchPolicy;
 use App\Policies\UserPolicy;
+use App\Policies\TeacherPolicy;
+use App\Policies\StudentPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -23,6 +27,8 @@ class AuthServiceProvider extends ServiceProvider
         Event::class      => EventPolicy::class,
         Research::class   => ResearchPolicy::class,
         User::class       => UserPolicy::class,
+        Teacher::class    => TeacherPolicy::class,
+        Student::class    => StudentPolicy::class,
     ];
 
 

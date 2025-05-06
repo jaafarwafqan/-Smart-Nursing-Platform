@@ -11,5 +11,7 @@ class RepositoryServiceProvider extends ServiceProvider
         \App\Contracts\EventServiceInterface::class     => \App\Services\EventService::class,
         \App\Contracts\ResearchServiceInterface::class  => \App\Services\ResearchService::class,
         \App\Contracts\UserServiceInterface::class      => \App\Services\UserService::class,
+        \App\Contracts\TeacherServiceInterface::class   => \App\Services\TeacherService::class,
+        \App\Contracts\StudentServiceInterface::class   => \App\Services\StudentService::class,
     ];
 }
