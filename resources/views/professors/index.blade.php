@@ -22,9 +22,7 @@
         <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
             <h3 class="h5 mb-0">إدارة الأساتذة</h3>
             <div class="d-flex gap-2">
-                <a href="{{ route('professors.create') }}" class="btn btn-sm btn-primary">
-                    <i class="fas fa-plus"></i> إضافة أستاذ
-                </a>
+                <x-button color="black" icon="plus" text="إضافة أستاذ" :href="route('professors.create')" />
                 <a href="{{ route('professors.import.form') }}" class="btn btn-sm btn-secondary">
                     <i class="fas fa-file-import"></i> استيراد Excel
                 </a>
@@ -55,9 +53,7 @@
                     </x-form.select>
                 </div>
                 <div class="col-md-3 d-flex align-items-end">
-                    <x-button.primary class="w-100">
-                        <i class="fas fa-search"></i> بحث
-                    </x-button.primary>
+                    <x-button color="black" icon="search" text="بحث" type="submit" class="w-100" />
                 </div>
             </form>
             <div class="table-responsive">

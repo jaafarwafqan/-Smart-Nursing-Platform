@@ -32,9 +32,7 @@
             <div class="card-header bg-white py-3 d-flex justify-content-between">
                 <h3 class="h5 mb-0">إدارة الفعاليات</h3>
                 <div class="d-flex gap-2">
-                    <a href="{{ route('events.create') }}"  class="btn btn-sm btn-primary">
-                        <i class="fas fa-plus"></i> إضافة فعالية
-                    </a>
+                    <x-button color="black" icon="plus" text="إضافة فعالية" :href="route('events.create')" />
                     <a href="{{ route('events.export') }}" class="btn btn-sm btn-success">
                         <i class="fas fa-file-excel"></i> تصدير Excel
                     </a>
@@ -71,9 +69,7 @@
                     </div>
 
                     <div class="col-12 col-lg-3 d-grid">
-                        <x-button.primary>
-                            <i class="fas fa-search"></i> بحث
-                        </x-button.primary>
+                        <x-button color="black" icon="search" text="بحث" type="submit" />
                     </div>
                 </form>
 

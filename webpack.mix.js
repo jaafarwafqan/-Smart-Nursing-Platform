@@ -1,0 +1,1 @@
+mix.js('resources/js/components/button.js', 'public/js/button.js'); 

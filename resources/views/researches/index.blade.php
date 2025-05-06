@@ -28,9 +28,8 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="mb-0">البحوث</h5>
                     <div class="d-flex gap-2">
-                        <a href="{{ route('researches.create') }}" class="btn btn-primary">
-                            <i class="fas fa-plus"></i> إضافة بحث جديد
-                        </a>
+                        <x-button color="black" icon="plus" text="إضافة بحث جديد" :href="route('researches.create')" />
+                        <x-button color="black" icon="search" text="بحث" type="submit" />
                         <a href="{{ route('researches.export') }}" class="btn btn-success">
                             <i class="fas fa-file-excel"></i> تصدير Excel
                         </a>

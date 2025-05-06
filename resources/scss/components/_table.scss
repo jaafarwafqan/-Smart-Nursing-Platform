@@ -1,0 +1,24 @@
+// جداول موحدة للمشروع
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  th, td {
+    padding: 0.65rem 0.75rem;
+    border: 1px solid #e5e7eb;
+    vertical-align: middle;
+    font-size: 0.97rem;
+  }
+  th {
+    background: #f3f4f6;
+    font-weight: 700;
+    color: #22223b;
+    text-align: center;
+  }
+  tr {
+    transition: background 0.15s;
+  }
+  tbody tr:hover {
+    background: #f1f5f9;
+  }
+}
+.table-responsive { overflow-x: unset; } 
