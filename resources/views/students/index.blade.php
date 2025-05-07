@@ -2,7 +2,7 @@
 @section('title','قائمة الطلاب')
 
 @section('content')
-<div class="container py-4">
+    <div class="container-fluid py-3">
     {{-- بطاقات إحصائية --}}
     <div class="row row-cols-1 row-cols-lg-4 g-3 mb-4">
         <div class="col">
@@ -19,7 +19,7 @@
         </div>
     </div>
     <div class="card shadow-sm">
-        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <div class="card-header bg-white py-3 d-flex justify-content-between">
             <h3 class="h5 mb-0">إدارة الطلاب</h3>
             <div class="d-flex gap-2">
                 <x-button color="black" icon="plus" text="إضافة طالب" :href="route('students.create')" />
@@ -33,11 +33,11 @@
         </div>
         <div class="card-body">
             @include('partials.alerts')
-            <form method="GET" class="row g-3 mb-4">
-                <div class="col-md-3">
+            <form method="GET" action="{{ route('students.index') }}"  class="row gy-2 gx-2 align-items-end mb-4">
+                <div class="col-12 col-lg-3">
                     <x-form.input name="search" label="بحث نصي" :value="request('search')" placeholder="اسم أو رقم جامعي"/>
                 </div>
-                <div class="col-md-3">
+                <div class="col-12 col-lg-3">
                     <x-form.select name="study_type" label="نوع الدراسة">
                         <option value="">الكل</option>
                         <option value="أولية" @selected(request('study_type')=='أولية')>أولية</option>
@@ -45,7 +45,7 @@
                         <option value="دكتوراه" @selected(request('study_type')=='دكتوراه')>دكتوراه</option>
                     </x-form.select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-12 col-lg-3">
                     <x-form.select name="gender" label="الجنس">
                         <option value="">الكل</option>
                         <option value="ذكر" @selected(request('gender')=='ذكر')>ذكر</option>
@@ -53,14 +53,16 @@
                     </x-form.select>
                 </div>
                 <div class="col-md-3 d-flex align-items-end">
-                    <x-button color="black" icon="search" text="بحث" type="submit" class="w-100" />
+                    <x-button.primary class="w-100">
+                        <i class="fas fa-search"></i> بحث
+                    </x-button.primary>
                 </div>
             </form>
             <div class="table-responsive">
                 <table class="table table-bordered table-hover align-middle custom-table datatable">
                     <thead class="table-light">
                         <tr>
-                            <th>#</th>
+                            <th>التسلسل</th>
                             <th>{!! sort_link('الاسم','name') !!}</th>
                             <th>{!! sort_link('الجنس','gender') !!}</th>
                             <th>{!! sort_link('تاريخ الميلاد','birthdate') !!}</th>
@@ -86,7 +88,7 @@
                             <td>{{ $student->email }}</td>
                             <td class="text-center">
                                 <div class="btn-group">
-                                    <a href="{{ route('students.edit', $student) }}" class="btn btn-sm btn-warning" title="تعديل">
+                                    <a href="{{ route('students.edit', $student) }}" class="btn btn-sm btn-primary" title="تعديل">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <form action="{{ route('students.destroy', $student) }}" method="POST" style="display:inline-block">

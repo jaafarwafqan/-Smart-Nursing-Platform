@@ -127,11 +127,21 @@
                                 <td class="text-center">
                                     @if($user->email !== 'jaafar1@jaafar1.com')
                                         @can('update',$user)
-                                            <x-button.edit :href="route('users.edit',$user)" />
+
+                                            <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-primary" title="تعديل">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
                                         @endcan
                                         @can('delete',$user)
                                             @if($user->id!==auth()->id())
-                                                <x-button.delete :action="route('users.destroy',$user)" :user="$user" />
+
+                                                    <form action="{{ route('users.destroy',$user) }}" method="POST" style="display:inline-block">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-sm btn-danger" onclick="return confirm('هل أنت متأكد من الحذف؟')" title="حذف">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
                                             @endif
                                         @endcan
                                     @else

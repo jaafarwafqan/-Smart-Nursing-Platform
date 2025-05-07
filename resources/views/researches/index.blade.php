@@ -2,12 +2,7 @@
 @section('title','البحوث')
 
 @section('content')
-    <div class="container-fluid">
-        <style>
-            .table-responsive { overflow-x: unset; }
-            table { width: 100%; table-layout: auto; }
-            th, td { white-space: normal; word-break: break-word; }
-        </style>
+    <div class="container-fluid py-3">
         {{-- بطاقات الإحصائيات --}}
         <div class="row row-cols-1 row-cols-lg-4 g-3 mb-4">
             <div class="col">
@@ -23,24 +18,21 @@
                 <x-stat-card color="danger"   :value="$stats['cancelled']"    icon="times"      title="بحوث ملغية"/>
             </div>
         </div>
-        <div class="row justify-content-center">
-            <div class="col-md-12">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0">البحوث</h5>
-                    <div class="d-flex gap-2">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white py-3 d-flex justify-content-between">
+                    <h5 class="h5 mb-0">البحوث</h5>
+                <div class="d-flex gap-2">
                         <x-button color="black" icon="plus" text="إضافة بحث جديد" :href="route('researches.create')" />
-                        <x-button color="black" icon="search" text="بحث" type="submit" />
                         <a href="{{ route('researches.export') }}" class="btn btn-success">
                             <i class="fas fa-file-excel"></i> تصدير Excel
                         </a>
                     </div>
                 </div>
 
-                @if(session('success'))
-                    <div class="alert alert-success">
-                        {{ session('success') }}
-                    </div>
-                @endif
+
+            <div class="card-body">
+
+                @include('partials.alerts')
 
                 {{-- فلاتر البحث --}}
                 <form method="GET" action="{{ route('researches.index') }}" class="row gy-2 gx-2 align-items-end mb-4">
@@ -62,13 +54,14 @@
                         <input type="text" name="professor" class="form-control" placeholder="ابحث باسم أستاذ..." value="{{ request('professor') }}">
                     </div>
                     <div class="col-12 col-lg-1 d-grid">
-                        <button class="btn btn-dark" type="submit"><i class="fas fa-search"></i> بحث</button>
+                        <x-button color="black" icon="search" text="بحث" type="submit" />
                     </div>
                 </form>
 
                 {{-- جدول البحوث --}}
-                <div class="table-responsive mb-4">
-                    <table class="table table-bordered table-striped">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle custom-table datatable">
+                        <thead class="table-light">
                         <thead>
                             <tr>
                                 <th>التسلسل</th>
@@ -76,7 +69,7 @@
                                 <th>{!! sort_link('الطلاب','students') !!}</th>
                                 <th>{!! sort_link('الأساتذة','professors') !!}</th>
                                 <th>{!! sort_link('الحالة','status') !!}</th>
-                                <th>الملف</th>
+                                <th>المرفقات</th>
                                 <th>الإجراءات</th>
                             </tr>
                         </thead>
@@ -139,8 +132,8 @@
                     </table>
                 </div>
 
-                <div class="d-flex justify-content-center mt-4">
-                    {{ $researches->links() }}
+                <div >
+                    {{ $researches->withQueryString()->links() }}
                 </div>
             </div>
         </div>

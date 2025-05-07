@@ -73,9 +73,10 @@
                         <input type="date" name="end_date" class="form-control"
                                value="{{ request('end_date') }}">
                     </div>
-
-                    <div class="col-12 col-lg-2 d-grid">
-                        <button class="btn btn-dark"><i class="fas fa-search"></i> بحث</button>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <x-button.primary class="w-100">
+                            <i class="fas fa-search"></i> بحث
+                        </x-button.primary>
                     </div>
                 </form>
 
@@ -115,17 +116,18 @@
 
                                 {{-- المرفقات --}}
                                 <td>
-                                    @forelse ($campaign->attachments ?? [] as $file)
-                                        <a href="{{ asset('storage/campaigns/'.$file) }}" class="attachment-link d-block">
-                                            <i class="fas fa-file-download"></i>
-                                            {{ \Str::limit($file,15) }}
+                                    @if($campaign->file_path)
+                                        <a href="{{ route('campaigns.attachments', $campaign) }}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-download"></i> تحميل
                                         </a>
-                                        @empty &mdash; @endforelse
+                                    @else
+                                        <span class="text-muted">لا يوجد ملف</span>
+                                    @endif
                                 </td>
 
                                 {{-- الإجراءات --}}
                                 <td class="text-center">
-                                    <a href="{{ route('campaigns.edit',$campaign) }}" class="btn btn-sm btn-warning">
+                                    <a href="{{ route('campaigns.edit',$campaign) }}" class="btn btn-sm btn-primary">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <form action="{{ route('campaigns.destroy',$campaign) }}" method="POST" class="d-inline"

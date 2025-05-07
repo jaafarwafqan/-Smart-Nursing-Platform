@@ -5,13 +5,6 @@
 @section('content')
     <div class="container-fluid py-3">
 
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle me-1"></i> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="إغلاق"></button>
-            </div>
-        @endif
-
         {{-- بطاقات الإحصاء --}}
         <div class="row row-cols-1 row-cols-lg-4 g-3 mb-4">
             <div class="col">
@@ -59,17 +52,19 @@
                                       :value="request('event_title')" placeholder="ابحث عن فعالية..."/>
                     </div>
 
-                    <div class="col-12 col-lg-3">
-                        <x-form.select name="branch" label="الفرع">
+                    <div class="col-md-3">
+                        <x-form.select name="branch_id" label="الفرع">
                             <option value="">الكل</option>
-                            @foreach($branches as $branch)
-                                <option value="{{ $branch }}" @selected(request('branch')==$branch)>{{ $branch }}</option>
+                            @foreach($branches as $id=>$name)
+                                <option value="{{ $id }}" @selected(request('branch_id')==$id)>{{ $name }}</option>
                             @endforeach
                         </x-form.select>
                     </div>
 
-                    <div class="col-12 col-lg-3 d-grid">
-                        <x-button color="black" icon="search" text="بحث" type="submit" />
+                    <div class="col-md-3 d-flex align-items-end">
+                        <x-button.primary class="w-100">
+                            <i class="fas fa-search"></i> بحث
+                        </x-button.primary>
                     </div>
                 </form>
 
@@ -104,22 +99,19 @@
 
                                 {{-- المرفقات --}}
                                 <td>
-                                    @forelse($event->attachments ?? [] as $file)
-                                        <a href="{{ asset('storage/events/'.$file) }}" target="_blank"
-                                           class="attachment-link d-block">
-                                            <i class="fas fa-file-download"></i>
-                                            <span class="text-truncate d-inline-block" style="max-width: 90px">
-                                            {{ \Str::limit($file,15) }}
-                                        </span>
+                                    @if($event->file_path)
+                                        <a href="{{ route('events.attachments', $event) }}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-download"></i> تحميل
                                         </a>
-                                        @empty &mdash;
-                                    @endforelse
+                                    @else
+                                        <span class="text-muted">لا يوجد ملف</span>
+                                    @endif
                                 </td>
 
                                 {{-- إجراءات --}}
                                 <td class="text-center">
                                     @can('update',$event)
-                                        <a href="{{ route('events.edit',$event) }}" class="btn btn-sm btn-warning" title="تعديل">
+                                        <a href="{{ route('events.edit',$event) }}" class="btn btn-sm btn-primary" title="تعديل">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                     @endcan

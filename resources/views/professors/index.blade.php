@@ -53,7 +53,9 @@
                     </x-form.select>
                 </div>
                 <div class="col-md-3 d-flex align-items-end">
-                    <x-button color="black" icon="search" text="بحث" type="submit" class="w-100" />
+                    <x-button.primary class="w-100">
+                        <i class="fas fa-search"></i> بحث
+                    </x-button.primary>
                 </div>
             </form>
             <div class="table-responsive">
@@ -86,7 +88,7 @@
                             <td>{{ $professor->email }}</td>
                             <td class="text-center">
                                 <div class="btn-group">
-                                    <a href="{{ route('professors.edit', $professor) }}" class="btn btn-sm btn-warning" title="تعديل">
+                                    <a href="{{ route('professors.edit', $professor) }}" class="btn btn-sm btn-primary" title="تعديل">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <form action="{{ route('professors.destroy', $professor) }}" method="POST" style="display:inline-block">

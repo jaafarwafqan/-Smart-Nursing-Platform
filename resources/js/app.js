@@ -25,7 +25,18 @@ document.addEventListener('DOMContentLoaded', () => {
             { targets: [6,7], searchable: false, orderable: false }
         ]
     });
+// button.js - وظائف بسيطة للأزرار الموحدة
 
+document.addEventListener('DOMContentLoaded', function () {
+    // مثال: تأكيد الحذف لجميع الأزرار التي تحمل data-confirm
+    document.querySelectorAll('button[data-confirm], a[data-confirm]').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            if (!confirm(btn.getAttribute('data-confirm'))) {
+                e.preventDefault();
+            }
+        });
+    });
+}); 
     // Tooltips & Popovers
     document.querySelectorAll('[data-bs-toggle="tooltip"]')
         .forEach(el => new bootstrap.Tooltip(el));
