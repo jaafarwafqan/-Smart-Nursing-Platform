@@ -26,4 +26,11 @@ class Professor extends Model
             ->withPivot(['role'])
             ->withTimestamps();
     }
+
+    public function professorResearches()
+    {
+        return $this->belongsToMany(\App\Models\ProfessorResearch::class, 'professor_research_professor')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
 } 

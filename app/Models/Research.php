@@ -18,13 +18,26 @@ class Research extends Model
     const STATUS_COMPLETED = 'completed';
     const STATUS_CANCELLED = 'cancelled';
 
+    // أنواع البحث
+    const TYPE_QUALITATIVE = 'qualitative';
+    const TYPE_QUANTITATIVE = 'quantitative';
+
+    // حالات النشر
+    const PUBLICATION_DRAFT = 'draft';
+    const PUBLICATION_SUBMITTED = 'submitted';
+    const PUBLICATION_UNDER_REVIEW = 'under_review';
+    const PUBLICATION_ACCEPTED = 'accepted';
+    const PUBLICATION_PUBLISHED = 'published';
+
     protected $fillable = [
         'branch_id',
         'research_title',
-        'research_type',   // أطروحة، بحث تطبيقي،…
+        'research_type',
         'start_date',
         'end_date',
-        'status',          // جاري - مكتمل - موقوف
+        'status',
+        'publication_status',
+        'completion_percentage',
         'description',
         'title',
         'abstract',
@@ -36,6 +49,7 @@ class Research extends Model
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
+        'completion_percentage' => 'integer',
     ];
 
     public function attachments()
@@ -62,6 +76,12 @@ class Research extends Model
             ->withTimestamps();
     }
 
+    public function journals()
+    {
+        return $this->belongsToMany(Journal::class, 'research_journal')
+            ->withTimestamps();
+    }
+
     /**
      * الحصول على قائمة حالات البحث
      */
@@ -72,6 +92,31 @@ class Research extends Model
             self::STATUS_IN_PROGRESS => 'قيد التنفيذ',
             self::STATUS_COMPLETED => 'مكتمل',
             self::STATUS_CANCELLED => 'ملغي',
+        ];
+    }
+
+    /**
+     * الحصول على قائمة أنواع البحث
+     */
+    public static function getResearchTypes(): array
+    {
+        return [
+            self::TYPE_QUALITATIVE => 'نوعي',
+            self::TYPE_QUANTITATIVE => 'كمي',
+        ];
+    }
+
+    /**
+     * الحصول على قائمة حالات النشر
+     */
+    public static function getPublicationStatuses(): array
+    {
+        return [
+            self::PUBLICATION_DRAFT => 'مسودة',
+            self::PUBLICATION_SUBMITTED => 'تم التقديم',
+            self::PUBLICATION_UNDER_REVIEW => 'قيد المراجعة',
+            self::PUBLICATION_ACCEPTED => 'تم القبول',
+            self::PUBLICATION_PUBLISHED => 'تم النشر',
         ];
     }
 }

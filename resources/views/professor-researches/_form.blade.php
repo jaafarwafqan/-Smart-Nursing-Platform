@@ -1,6 +1,15 @@
-@props(['research' => null, 'branches', 'journals' => [], 'isProfessorView' => false])
+@props(['research' => null, 'branches', 'journals' => []])
 
 @php  $isEdit = ! is_null($research); @endphp
+
+@php
+    $journalTypeText = [
+        'local' => 'محلي',
+        'international' => 'عالمي',
+        'scopus' => 'عالمي ضمن مستوعبات اسكوبس',
+        'clarivate' => 'عالمي ضمن مستوعبات كلاريفيت',
+    ];
+@endphp
 
 <x-form.select name="branch_id" label='<i class="fas fa-code-branch text-muted ms-1"></i> الفرع'>
     @foreach($branches as $id => $name)
@@ -70,7 +79,7 @@
                     <input type="hidden" name="journals[{{ $loop->index }}][type]" value="{{ $journal->type }}">
                     <input type="hidden" name="journals[{{ $loop->index }}][name]" value="{{ $journal->name }}">
                     <div class="d-flex justify-content-between align-items-center p-2 border rounded">
-                        <span>{{ $journal->name }} ({{ getJournalTypeText($journal->type) }})</span>
+                        <span>{{ $journal->name }} ({{ $journalTypeText[$journal->type] ?? $journal->type }})</span>
                         <button type="button" class="btn btn-sm btn-danger" onclick="removeJournal(this)">
                             <i class="fas fa-times"></i>
                         </button>
@@ -86,57 +95,7 @@
 </x-form.textarea>
 
 <div class="row">
-    @unless($isProfessorView)
-    <div class="col-md-6">
-        <div class="mb-3">
-            <label class="form-label"><i class="fas fa-user-graduate text-muted ms-1"></i> الطلاب</label>
-            <div id="students-container">
-                @if(isset($students) && isset($selectedStudents))
-                    @foreach($selectedStudents as $student)
-                        <div class="row mb-2">
-                            <div class="col-md-8">
-                                <select class="form-select" name="students[]" required>
-                                    <option value="">اختر طالب</option>
-                                    @foreach($students as $s)
-                                        <option value="{{ $s->id }}" {{ $s->id == $student->id ? 'selected' : '' }}>{{ $s->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <select class="form-select" name="student_roles[]" required>
-                                    <option value="author" {{ $student->pivot->role == 'author' ? 'selected' : '' }}>مؤلف</option>
-                                    <option value="co-author" {{ $student->pivot->role == 'co-author' ? 'selected' : '' }}>مؤلف مشارك</option>
-                                </select>
-                            </div>
-                        </div>
-                    @endforeach
-                @endif
-                <div class="row mb-2">
-                    <div class="col-md-8">
-                        <select class="form-select" name="students[]">
-                            <option value="">اختر طالب</option>
-                            @if(isset($students))
-                                @foreach($students as $student)
-                                    <option value="{{ $student->id }}">{{ $student->name }}</option>
-                                @endforeach
-                            @endif
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <select class="form-select" name="student_roles[]">
-                            <option value="author">مؤلف</option>
-                            <option value="co-author">مؤلف مشارك</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <button type="button" class="btn btn-sm btn-secondary" onclick="addStudentField()">
-                <i class="fas fa-plus"></i> إضافة طالب
-            </button>
-        </div>
-    </div>
-    @endunless
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="mb-3">
             <label class="form-label"><i class="fas fa-chalkboard-teacher text-muted ms-1"></i> الأساتذة</label>
             <div id="professors-container">
@@ -252,4 +211,4 @@ function removeJournal(button) {
     });
 }
 </script>
-@endpush
+@endpush 

@@ -9,6 +9,7 @@ use App\Http\Controllers\ResearchController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\ProfessorController;
+use App\Http\Controllers\ProfessorResearchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -100,6 +101,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/import', [ProfessorController::class, 'import'])->name('professors.import');
         Route::get('/export', [ProfessorController::class, 'export'])->name('professors.export');
         Route::post('/{professor}/attach-research', [ProfessorController::class, 'attachResearch'])->name('professors.attachResearch');
+    });
+
+    // مسارات بحوث الأساتذة
+    Route::middleware(['auth'])->group(function () {
+        Route::resource('professor-researches', ProfessorResearchController::class);
     });
 
 });

@@ -27,7 +27,26 @@
                         <li class="nav-item"><a class="nav-link" href="{{ route('campaigns.index') }}"><i class="fas fa-bullhorn me-1"></i> الحملات</a></li>
                     @endcan
                     @can('manage_researches')
-                        <li class="nav-item"><a class="nav-link" href="{{ route('researches.index') }}"><i class="fas fa-flask me-1"></i> البحوث</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {{ request()->routeIs('researches.*') || request()->routeIs('professor-researches.*') ? 'active' : '' }}" href="#" id="researchDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-book me-1"></i>
+                                <span>البحوث</span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="researchDropdown">
+                                <li>
+                                    <a class="dropdown-item {{ request()->routeIs('researches.*') ? 'active' : '' }}" href="{{ route('researches.index') }}">
+                                        <i class="fas fa-list me-1"></i>
+                                        <span>جميع البحوث</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item {{ request()->routeIs('professor-researches.*') ? 'active' : '' }}" href="{{ route('professor-researches.index') }}">
+                                        <i class="fas fa-user-tie me-1"></i>
+                                        <span>بحوث الأساتذة</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                     @endcan
                     <li class="nav-item"><a class="nav-link" href="{{ route('students.index') }}"><i class="fas fa-user-graduate me-1"></i> الطلاب</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('professors.index') }}"><i class="fas fa-chalkboard-teacher me-1"></i> الأساتذة</a></li>

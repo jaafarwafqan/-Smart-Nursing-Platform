@@ -18,6 +18,7 @@
                             'branches' => $branches ?? [],
                             'students' => $students ?? [],
                             'professors' => $professors ?? [],
+                            'journals' => $journals ?? [],
                             'selectedStudents' => [],
                             'selectedProfessors' => [],
                         ])
