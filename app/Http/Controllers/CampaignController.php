@@ -8,6 +8,7 @@ use App\Models\Branch;
 use App\Http\Requests\StoreCampaignRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
 
 class CampaignController extends Controller
 {
@@ -22,30 +23,36 @@ class CampaignController extends Controller
     /* ───────────────────────────────
        قائمة الحملات مع فلاتر بسيطة
     ─────────────────────────────── */
-    public function index(): View
+    public function index(Request $request): View
     {
         $query = Campaign::query()
-            ->when(request('search'),     fn ($q, $s) => $q->whereFullText('title', $s))
-            ->when(request('branch_id'),  fn ($q, $b) => $q->where('branch_id', $b))
-            ->with('branch')              // تأكّد أن العلاقة branch معرَّفة
-            ->latest();
+            ->when($request->branch_id, fn($q, $v) => $q->where('branch_id', $v))
+            ->when($request->search, fn($q, $v) => $q->where('campaign_title', 'like', "%$v%"))
+            ->when($request->status, fn($q, $v) => $q->where('status', $v))
+            ->when($request->start_date, fn($q, $v) => $q->whereDate('start_date', '>=', $v))
+            ->when($request->end_date, fn($q, $v) => $q->whereDate('end_date', '<=', $v))
+            ->orderBy($request->get('sort', 'start_date'), $request->get('direction', 'desc'));
+        $campaigns = $query->paginate(15);
 
-        $campaigns = $query->paginate(10);
+        $stats = [
+            'total_campaigns'      => Campaign::count(),
+            'pending_campaigns'    => Campaign::where('status', 'pending')->count(),
+            'total_participants'   => Campaign::sum('participants_count'),
+            'average_participants' => round(Campaign::avg('participants_count')),
+        ];
 
         return view('campaigns.index', [
-            'campaigns' => $campaigns,
             'branches'  => Branch::pluck('name', 'id'),
+            'stats'     => $stats,
+            'campaigns' => $campaigns,
         ]);
     }
 
-    /* ───────────────────────────────
-       إنشاء حملة
-    ─────────────────────────────── */
     public function create(): View
     {
         return view('campaigns.create', [
             'branches' => Branch::pluck('name', 'id'),
-            'campaign' => null,           // ليُعاد استخدام form‑partial
+            'campaign' => null,
         ]);
     }
 
@@ -53,18 +60,10 @@ class CampaignController extends Controller
     {
         $campaign = $this->service->create($request->validated());
 
-        return to_route('campaigns.show', $campaign)
+        return to_route('campaigns.index', $campaign)
             ->withSuccess('تمّت إضافة الحملة بنجاح');
     }
 
-    /* ───────────────────────────────
-       عرض حملة منفردة
-    ─────────────────────────────── */
-
-
-    /* ───────────────────────────────
-       تعديل حملة
-    ─────────────────────────────── */
     public function edit(Campaign $campaign): View
     {
         return view('campaigns.edit', [
@@ -88,5 +87,13 @@ class CampaignController extends Controller
         $this->service->delete($campaign);
 
         return to_route('campaigns.index')->withSuccess('تمّ حذف الحملة');
+    }
+
+    public function show(Campaign $campaign): View
+    {
+        return view('campaigns._form', [
+            'campaign' => $campaign,
+            'branches' => Branch::pluck('name', 'id'),
+        ]);
     }
 }

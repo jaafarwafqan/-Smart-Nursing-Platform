@@ -12,13 +12,14 @@ class Campaign extends Model
     /* الحقول المسموح بالكتابة الجماعية */
     protected $fillable = [
         'branch_id',
-        'campaign_type',
         'campaign_title',
-        'campaign_datetime',
-        'location',
-        'audience',      // عدد الجمهور أو الفئة المستهدفة (اختياري)
         'description',
         'planned',
+        'status',
+        'start_date',
+        'end_date',
+        'organizers',
+        'participants_count',
     ];
 
     /* التحويلات السحرية */

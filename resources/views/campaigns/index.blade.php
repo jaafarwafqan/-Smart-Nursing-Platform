@@ -5,9 +5,6 @@
 @section('content')
     <div class="container-fluid py-3">
 
-        {{-- تنبيهات --}}
-        @include('partials.alerts')
-
         {{-- بطاقات الإحصاء --}}
         <div class="row row-cols-1 row-cols-lg-4 g-3 mb-4">
             <div class="col">
@@ -87,12 +84,14 @@
                         <thead class="table-light text-nowrap">
                         <tr>
                             <th>التسلسل</th>
-                            <th>{!! sort_link('عنوان الحملة','title')     !!}</th>
-                            <th>{!! sort_link('الفرع','branch_id')         !!}</th>
+                            <th>{!! sort_link('عنوان الحملة','campaign_title') !!}</th>
+                            <th>{!! sort_link('الحالة','status') !!}</th>
+                            <th>{!! sort_link('الفرع','branch_id') !!}</th>
                             <th>{!! sort_link('تاريخ البداية','start_date')!!}</th>
-                            <th>{!! sort_link('تاريخ النهاية','end_date')  !!}</th>
+                            <th>{!! sort_link('تاريخ النهاية','end_date') !!}</th>
                             <th>المنظمون</th>
-                            <th>المرفقات</th>
+                            <th>عدد المشاركين</th>
+                            <th>الوصف</th>
                             <th class="text-center">الإجراءات</th>
                         </tr>
                         </thead>
@@ -101,31 +100,18 @@
                         @forelse ($campaigns as $campaign)
                             <tr>
                                 <td>{{ $loop->iteration + ($campaigns->currentPage()-1)*$campaigns->perPage() }}</td>
-                                <td>{{ $campaign->title }}</td>
+                                <td>{{ $campaign->campaign_title }}</td>
+                                <td>
+                                    @if($campaign->status == 'pending')<span class="badge bg-warning">قيد الانتظار</span>@endif
+                                    @if($campaign->status == 'active')<span class="badge bg-success">نشطة</span>@endif
+                                    @if($campaign->status == 'completed')<span class="badge bg-secondary">مكتملة</span>@endif
+                                </td>
                                 <td>{{ $campaign->branch?->name ?? '—' }}</td>
                                 <td>{{ optional($campaign->start_date)->format('Y-m-d') }}</td>
                                 <td>{{ optional($campaign->end_date)->format('Y-m-d') }}</td>
-
-                                {{-- المنظمون --}}
-                                <td>
-                                    @forelse ($campaign->organizers ?? [] as $org)
-                                        <span class="badge bg-light text-dark">{{ $org }}</span>
-                                        @empty &mdash;
-                                    @endforelse
-                                </td>
-
-                                {{-- المرفقات --}}
-                                <td>
-                                    @if($campaign->file_path)
-                                        <a href="{{ route('campaigns.attachments', $campaign) }}" class="btn btn-sm btn-info">
-                                            <i class="fas fa-download"></i> تحميل
-                                        </a>
-                                    @else
-                                        <span class="text-muted">لا يوجد ملف</span>
-                                    @endif
-                                </td>
-
-                                {{-- الإجراءات --}}
+                                <td>{{ $campaign->organizers }}</td>
+                                <td>{{ $campaign->participants_count }}</td>
+                                <td>{{ Str::limit($campaign->description, 30) }}</td>
                                 <td class="text-center">
                                     <a href="{{ route('campaigns.edit',$campaign) }}" class="btn btn-sm btn-primary">
                                         <i class="fas fa-edit"></i>
@@ -138,7 +124,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="8" class="text-center">لا توجد حملات</td></tr>
+                            <tr><td colspan="10" class="text-center">لا توجد حملات</td></tr>
                         @endforelse
                         </tbody>
                     </table>

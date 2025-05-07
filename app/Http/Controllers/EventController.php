@@ -70,7 +70,7 @@ class EventController extends Controller
     public function store(StoreEventRequest $request): RedirectResponse
     {
         $event = $this->service->create($request->validated());
-        return to_route('events.show', $event)
+        return to_route('events.index', $event)
             ->withSuccess('تمّت إضافة الفعاليّة بنجاح');
     }
     public function show(Event $event): View

@@ -14,13 +14,14 @@ return new class extends Migration
         Schema::create('campaigns', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('branch_id')->nullable()->index();
-            $table->string('campaign_type', 120);
             $table->string('campaign_title');
-            $table->dateTime('campaign_datetime');
-            $table->string('location');
-            $table->unsignedInteger('audience')->nullable();
             $table->text('description')->nullable();
             $table->boolean('planned')->nullable()->default(false);
+            $table->enum('status', ['pending', 'active', 'completed'])->default('pending');
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->string('organizers')->nullable();
+            $table->unsignedInteger('participants_count')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
