@@ -26,6 +26,8 @@ class Campaign extends Model
     protected $casts = [
         'planned'          => 'boolean',
         'campaign_datetime'=> 'datetime',
+        'start_date'       => 'datetime',
+        'end_date'         => 'datetime',
     ];
 
     /* علاقات */

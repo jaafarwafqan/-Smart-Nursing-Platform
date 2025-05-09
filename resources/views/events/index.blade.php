@@ -37,7 +37,8 @@
                 @include('partials.alerts')
 
                 {{-- فلاتر البحث --}}
-                <form method="GET" action="{{ route('events.index') }}" class="row gy-2 gx-2 align-items-end mb-4">
+                <form method="GET" action="{{ route('events.index') }}"
+                      class="row gy-2 gx-2 align-items-end mb-4">
                     <div class="col-12 col-lg-3">
                         <x-form.select name="event_type" label="نوع الفعالية">
                             <option value="">الكل</option>
@@ -46,13 +47,19 @@
                             @endforeach
                         </x-form.select>
                     </div>
-
                     <div class="col-12 col-lg-3">
+                        <x-form.select name="activity_classification" label="تصنيف النشاط">
+                            <option value="">الكل</option>
+                            @foreach($activityClassifications as $classification)
+                                <option value="{{ $classification }}" @selected(request('activity_classification')==$classification)>{{ $classification }}</option>
+                            @endforeach
+                        </x-form.select>
+                    </div>
+                    <div class="col-6 col-lg-2">
                         <x-form.input name="event_title" label="عنوان الفعالية"
                                       :value="request('event_title')" placeholder="ابحث عن فعالية..."/>
                     </div>
-
-                    <div class="col-md-3">
+                    <div class="col-6 col-lg-2">
                         <x-form.select name="branch_id" label="الفرع">
                             <option value="">الكل</option>
                             @foreach($branches as $id=>$name)
@@ -60,8 +67,7 @@
                             @endforeach
                         </x-form.select>
                     </div>
-
-                    <div class="col-md-3 d-flex align-items-end">
+                    <div class="col-md-2 d-flex align-items-end">
                         <x-button.primary class="w-100">
                             <i class="fas fa-search"></i> بحث
                         </x-button.primary>
@@ -69,15 +75,15 @@
                 </form>
 
                 {{-- جدول الفعاليات --}}
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover align-middle custom-table datatable">
-                        <thead class="table-light">
+                <div class="table-responsive">   {{-- أبقه لو تريد الـ scroll فى الشاشات الصغيرة --}}
+                    <table class="table w-100 table-bordered table-hover align-middle custom-table">
+                        <thead class="table-light text-nowrap">
                         <tr>
                             <th>التسلسل</th>
                             <th>{!! sort_link('نوع الفعالية','event_type') !!}</th>
                             <th>{!! sort_link('عنوان الفعالية','event_title') !!}</th>
                             <th>{!! sort_link('التاريخ والوقت','event_datetime') !!}</th>
-                            <th>{!! sort_link('الموقع','location') !!}</th>
+                            <th>{!! sort_link('تصنيف النشاط','activity_classification') !!}</th>
                             <th>{!! sort_link('الفرع','branch') !!}</th>
                             <th>المرفقات</th>
                             <th class="text-center">الإجراءات</th>
@@ -93,9 +99,10 @@
                                 </td>
                                 <td>{{ $event->event_title }}</td>
                                 <td>{{ $event->event_datetime->format('Y-m-d H:i') }}</td>
-                                <td>{{ $event->location }}</td>
+                                <td>
+                                    <span class="badge bg-info">{{ $event->activity_classification ?? '—' }}</span>
+                                </td>
                                 <td>{{ optional($event->branch)->name ?? '—' }}</td>
-
 
                                 {{-- المرفقات --}}
                                 <td>

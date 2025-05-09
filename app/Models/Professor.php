@@ -29,7 +29,7 @@ class Professor extends Model
 
     public function professorResearches()
     {
-        return $this->belongsToMany(\App\Models\ProfessorResearch::class, 'professor_research_professor')
+        return $this->belongsToMany(\App\Models\ProfessorResearch::class, 'professor_research', 'professor_id', 'research_id')
             ->withPivot('role')
             ->withTimestamps();
     }

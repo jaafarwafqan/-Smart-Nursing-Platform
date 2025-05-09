@@ -15,6 +15,7 @@ class StoreEventRequest extends FormRequest
         return [
             'branch_id'      => 'required|exists:branches,id',
             'event_type'     => 'required|string|max:120',
+            'activity_classification' => 'required|string|in:' . implode(',', config('types.activity_classifications')),
             'event_title'    => 'required|string|max:255',
             'event_datetime' => 'required|date',
             'location'       => 'required|string|max:255',

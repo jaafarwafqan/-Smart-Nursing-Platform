@@ -18,8 +18,8 @@
             <x-stat-card color="warning" icon="venus-mars" :value="$stats['female'] ?? 0" title="طالبات"/>
         </div>
     </div>
-    <div class="card shadow-sm">
-        <div class="card-header bg-white py-3 d-flex justify-content-between">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white py-3 d-flex justify-content-between">
             <h3 class="h5 mb-0">إدارة الطلاب</h3>
             <div class="d-flex gap-2">
                 <x-button color="black" icon="plus" text="إضافة طالب" :href="route('students.create')" />
@@ -33,7 +33,7 @@
         </div>
         <div class="card-body">
             @include('partials.alerts')
-            <form method="GET" action="{{ route('students.index') }}"  class="row gy-2 gx-2 align-items-end mb-4">
+            <form method="GET" action="{{ route('students.index') }}"   class="row gy-2 gx-2 align-items-end mb-4">
                 <div class="col-12 col-lg-3">
                     <x-form.input name="search" label="بحث نصي" :value="request('search')" placeholder="اسم أو رقم جامعي"/>
                 </div>
@@ -58,9 +58,9 @@
                     </x-button.primary>
                 </div>
             </form>
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover align-middle custom-table datatable">
-                    <thead class="table-light">
+            <div class="table-responsive">   {{-- أبقه لو تريد الـ scroll فى الشاشات الصغيرة --}}
+                <table class="table w-100 table-bordered table-hover align-middle custom-table">
+                    <thead class="table-light text-nowrap">
                         <tr>
                             <th>التسلسل</th>
                             <th>{!! sort_link('الاسم','name') !!}</th>

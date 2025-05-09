@@ -10,8 +10,17 @@ class Event extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'branch_id','event_type','event_title','event_datetime',
-        'location','lecturers','attendance','duration','description','planned'
+        'branch_id',
+        'event_type',
+        'activity_classification',
+        'event_title',
+        'event_datetime',
+        'location',
+        'lecturers',
+        'attendance',
+        'duration',
+        'description',
+        'planned'
     ];
 
     protected $casts = [

@@ -15,6 +15,7 @@ class EventRequest extends FormRequest
     {
         return [
             'event_type' => 'required|string|max:255',
+            'activity_classification' => 'required|string|in:' . implode(',', config('types.activity_classifications')),
             'event_title' => 'required|string|max:255',
             'event_datetime' => 'required|date',
             'location' => 'required|string|max:255',
@@ -33,6 +34,10 @@ class EventRequest extends FormRequest
             'event_type.required' => 'نوع الفعالية مطلوب',
             'event_type.string' => 'نوع الفعالية يجب أن يكون نصاً',
             'event_type.max' => 'نوع الفعالية يجب أن لا يتجاوز 255 حرف',
+            
+            'activity_classification.required' => 'تصنيف النشاط مطلوب',
+            'activity_classification.string' => 'تصنيف النشاط يجب أن يكون نصاً',
+            'activity_classification.in' => 'تصنيف النشاط غير صالح',
             
             'event_title.required' => 'عنوان الفعالية مطلوب',
             'event_title.string' => 'عنوان الفعالية يجب أن يكون نصاً',

@@ -25,13 +25,24 @@ class CampaignController extends Controller
     ─────────────────────────────── */
     public function index(Request $request): View
     {
+        $allowedSorts = ['id', 'campaign_title', 'status', 'branch_id', 'start_date', 'end_date', 'organizers', 'participants_count'];
+        $sort = $request->get('sort_by', 'start_date');
+        $direction = $request->get('sort_dir', 'desc');
+
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'start_date';
+        }
+        if (!in_array($direction, ['asc', 'desc'])) {
+            $direction = 'desc';
+        }
+
         $query = Campaign::query()
             ->when($request->branch_id, fn($q, $v) => $q->where('branch_id', $v))
             ->when($request->search, fn($q, $v) => $q->where('campaign_title', 'like', "%$v%"))
             ->when($request->status, fn($q, $v) => $q->where('status', $v))
             ->when($request->start_date, fn($q, $v) => $q->whereDate('start_date', '>=', $v))
             ->when($request->end_date, fn($q, $v) => $q->whereDate('end_date', '<=', $v))
-            ->orderBy($request->get('sort', 'start_date'), $request->get('direction', 'desc'));
+            ->orderBy($sort, $direction);
         $campaigns = $query->paginate(15);
 
         $stats = [

@@ -2,7 +2,7 @@
 @section('title','قائمة الأساتذة')
 
 @section('content')
-<div class="container py-4">
+    <div class="container-fluid py-3">
     {{-- بطاقات إحصائية افتراضية --}}
     <div class="row row-cols-1 row-cols-lg-4 g-3 mb-4">
         <div class="col">
@@ -19,7 +19,7 @@
         </div>
     </div>
     <div class="card shadow-sm">
-        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <div class="card-header bg-white py-3 d-flex justify-content-between">
             <h3 class="h5 mb-0">إدارة الأساتذة</h3>
             <div class="d-flex gap-2">
                 <x-button color="black" icon="plus" text="إضافة أستاذ" :href="route('professors.create')" />
@@ -33,7 +33,8 @@
         </div>
         <div class="card-body">
             @include('partials.alerts')
-            <form method="GET" class="row g-3 mb-4">
+            <form method="GET" action="{{ route('professors.index') }}"
+                  class="row gy-2 gx-2 align-items-end mb-4">
                 <div class="col-md-3">
                     <x-form.input name="search" label="بحث نصي" :value="request('search')" placeholder="اسم أو كلية"/>
                 </div>
@@ -58,19 +59,19 @@
                     </x-button.primary>
                 </div>
             </form>
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover align-middle custom-table datatable">
-                    <thead class="table-light">
+            <div class="table-responsive">   {{-- أبقه لو تريد الـ scroll فى الشاشات الصغيرة --}}
+                <table class="table w-100 table-bordered table-hover align-middle custom-table">
+                    <thead class="table-light text-nowrap">
                         <tr>
-                            <th>#</th>
-                            <th>الاسم</th>
-                            <th>الجنس</th>
-                            <th>الرتبة العلمية</th>
-                            <th>الكلية</th>
-                            <th>القسم</th>
+                            <th>التسلسل</th>
+                            <th>{!! sort_link('الاسم','name') !!}</th>
+                            <th>{!! sort_link('الجنس','gender') !!}</th>
+                            <th>{!! sort_link('الرتبة العلمية','academic_rank') !!}</th>
+                            <th>{!! sort_link('الكلية','college') !!}</th>
+                            <th>{!! sort_link('القسم','department') !!}</th>
                             <th>مجالات الاهتمام</th>
-                            <th>الهاتف</th>
-                            <th>البريد الإلكتروني</th>
+                            <th>{!! sort_link('الهاتف','phone') !!}</th>
+                            <th>{!! sort_link('البريد الإلكتروني','email') !!}</th>
                             <th class="text-center">الإجراءات</th>
                         </tr>
                     </thead>

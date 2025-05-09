@@ -14,7 +14,7 @@ class ProfessorsImport implements ToModel, WithHeadingRow, WithValidation
         // تطبيع قيمة الجنس
         $gender = trim($row['gender']);
         if ($gender === 'انثى' || $gender === 'أنثى') {
-            $gender = 'أنثى';
+            $gender = 'انثى';
         } else {
             $gender = 'ذكر';
         }
@@ -36,7 +36,7 @@ class ProfessorsImport implements ToModel, WithHeadingRow, WithValidation
     {
         return [
             'name'   => 'required|string',
-            'gender' => 'required|in:ذكر,انثى,أنثى',
+            'gender' => 'required|in:ذكر,انثى',
             'email'  => 'nullable|email',
         ];
     }

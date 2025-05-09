@@ -64,10 +64,9 @@
     </form>
 
     {{-- جدول البحوث --}}
-    <div class="bg-white p-3 rounded-3">
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover align-middle custom-table datatable">
-                <thead class="table-light">
+    <div class="table-responsive">   {{-- أبقه لو تريد الـ scroll فى الشاشات الصغيرة --}}
+        <table class="table w-100 table-bordered table-hover align-middle custom-table">
+            <thead class="table-light text-nowrap">
                     <tr>
                         <th>التسلسل</th>
                         <th>{!! sort_link('العنوان','title') !!}</th>
@@ -143,4 +142,4 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection

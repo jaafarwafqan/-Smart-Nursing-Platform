@@ -13,16 +13,27 @@ class ProfessorController extends Controller
 {
     public function index(Request $request)
     {
+        $allowedSorts = ['id', 'name', 'gender', 'academic_rank', 'college', 'department', 'phone', 'email'];
+        $sort = $request->get('sort_by', 'id');
+        $direction = $request->get('sort_dir', 'desc');
+
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'id';
+        }
+        if (!in_array($direction, ['asc', 'desc'])) {
+            $direction = 'desc';
+        }
+
         $professors = Professor::query()
             ->when($request->input('search'), fn($q, $s) => $q->where('name', 'like', "%$s%"))
-            ->orderBy('id', 'desc')
+            ->orderBy($sort, $direction)
             ->paginate(20);
 
         $stats = [
             'total'      => Professor::count(),
             'professors' => Professor::where('academic_rank', 'أستاذ')->count(),
             'assistants' => Professor::where('academic_rank', 'أستاذ مساعد')->count(),
-            'female'     => Professor::where('gender', 'أنثى')->count(),
+            'female'     => Professor::where('gender', 'انثى')->count(),
         ];
 
         return view('professors.index', compact('professors', 'stats'));

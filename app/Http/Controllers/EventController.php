@@ -23,11 +23,23 @@ class EventController extends Controller
     /** عرض جميع الفعاليات */
     public function index(Request $request)
     {
+        $allowedSorts = ['id', 'event_type', 'event_title', 'event_datetime', 'activity_classification', 'branch_id', 'attendance', 'duration'];
+        $sort = $request->get('sort_by', 'event_datetime');
+        $direction = $request->get('sort_dir', 'desc');
+
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'event_datetime';
+        }
+        if (!in_array($direction, ['asc', 'desc'])) {
+            $direction = 'desc';
+        }
+
         $events = Event::query()
             ->when($request->event_type, fn($q,$v)=>$q->where('event_type',$v))
+            ->when($request->activity_classification, fn($q,$v)=>$q->where('activity_classification',$v))
             ->when($request->event_title,fn($q,$v)=>$q->where('event_title','like',"%$v%"))
             ->when($request->branch_id, fn($q,$v)=>$q->where('branch_id',$v))
-            ->orderBy($request->get('sort','event_datetime'), $request->get('direction','desc'))
+            ->orderBy($sort, $direction)
             ->paginate(15);
 
         $stats = [
@@ -41,6 +53,7 @@ class EventController extends Controller
             'events'      => $events,
             'stats'       => $stats,
             'eventTypes'  => config('types.event_types',[]),
+            'activityClassifications' => config('types.activity_classifications',[]),
             'branches'    => config('branches',[]),
         ]);
     }
@@ -53,6 +66,7 @@ class EventController extends Controller
             'event'      => null,
             'branches' => \App\Models\Branch::pluck('name', 'id'),          // id => name
             'eventTypes' => Config::get('types.event_types', []),   // ['ندوة','ورشة'…]
+            'activityClassifications' => Config::get('types.activity_classifications', []),
         ]);
     }
 
@@ -62,7 +76,7 @@ class EventController extends Controller
             'event'      => $event,
             'branches' => \App\Models\Branch::pluck('name', 'id'),
             'eventTypes' => Config::get('types.event_types', []),
-
+            'activityClassifications' => Config::get('types.activity_classifications', []),
         ]);
     }
 
@@ -79,6 +93,7 @@ class EventController extends Controller
             'event'      => $event,
             'branches'   => \App\Models\Branch::pluck('name', 'id'),
             'eventTypes' => \Illuminate\Support\Facades\Config::get('types.event_types', []),
+            'activityClassifications' => Config::get('types.activity_classifications', []),
         ]);
     }
     /** تحديث البيانات */

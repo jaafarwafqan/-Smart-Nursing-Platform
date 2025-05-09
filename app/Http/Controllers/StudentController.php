@@ -16,11 +16,22 @@ class StudentController extends Controller
 {
     public function index(Request $request)
     {
+        $allowedSorts = ['id', 'name', 'gender', 'birthdate', 'university_number', 'study_type', 'study_year', 'phone', 'email'];
+        $sort = $request->get('sort_by', 'id');
+        $direction = $request->get('sort_dir', 'desc');
+
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'id';
+        }
+        if (!in_array($direction, ['asc', 'desc'])) {
+            $direction = 'desc';
+        }
+
         $students = Student::query()
             ->when($request->input('study_type'), fn($q, $type) => $q->where('study_type', $type))
             ->when($request->input('search'), fn($q, $s) => $q->where('name', 'like', "%$s%"))
             ->when($request->input('gender'), fn($q, $g) => $q->where('gender', $g))
-            ->orderBy('id', 'desc')
+            ->orderBy($sort, $direction)
             ->paginate(20);
 
         $stats = [

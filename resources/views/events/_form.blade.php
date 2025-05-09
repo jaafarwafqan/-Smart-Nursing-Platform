@@ -24,10 +24,19 @@
     @endforeach
 </x-form.select>
 
+<x-form.select name="activity_classification" label='<i class="fas fa-tags text-muted ms-1"></i> تصنيف النشاط'>
+    @foreach($activityClassifications as $classification)
+        <option value="{{ $classification }}"
+            @selected(old('activity_classification', $event->activity_classification ?? '') === $classification)>
+            {{ $classification }}
+        </option>
+    @endforeach
+</x-form.select>
+
 <x-form.input type="datetime-local" name="event_datetime" label='<i class="fas fa-calendar-alt text-muted ms-1"></i> التاريخ والوقت'
               :value="old('event_datetime', optional($event?->event_datetime)->format('Y-m-d\\TH:i'))" />
 
-<x-form.input name="location" label='<i class="fas fa-map-marker-alt text-muted ms-1"></i> الموقع'
+<x-form.input name="location" label='<i class="fas fa-map-marker-alt text-muted ms-1"></i> المكان'
               :value="old('location', $event->location ?? '')" />
 
 <x-form.textarea name="description" label='<i class="fas fa-align-right text-muted ms-1"></i> الوصف'>
