@@ -15,6 +15,8 @@
         {{-- تمرير المتغيّر $branches و $event و $eventTypes إلى الـPartial --}}
         @include('events._form', ['branches' => $branches, 'event' => null, 'eventTypes' => $eventTypes])
 
+
+
     </form>
 
 @endsection

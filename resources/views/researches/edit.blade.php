@@ -57,23 +57,24 @@ function addStudentField() {
 function addProfessorField() {
     const container = document.getElementById('professors-container');
     const newField = document.createElement('div');
-    newField.className = 'row mb-2';
+    newField.className = "row mb-2";
+
     newField.innerHTML = `
-        <div class="col-md-8">
-            <select class="form-select" name="professors[]" required>
-                <option value="">اختر أستاذ</option>
-                @foreach($professors as $professor)
-                    <option value="{{ $professor->id }}">{{ $professor->name }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="col-md-4">
-            <select class="form-select" name="professor_roles[]" required>
-                <option value="supervisor">مشرف</option>
-                <option value="reviewer">مراجع</option>
-            </select>
-        </div>
-    `;
+    <div class="col-md-8">
+        <select class="form-select" name="professors[]" required>
+    <option value="">اختر أستاذ</option>
+    @foreach($professors as $professor)
+    <option value="{{ $professor->id }}">{{ $professor->name }}</option>
+    @endforeach
+</select>
+</div>
+    <div class="col-md-4">
+        <select class="form-select" name="professor_roles[]" required>
+            <option value="supervisor">مشرف</option>
+            <option value="reviewer">مراجع</option>
+        </select>
+    </div>
+        `;
     container.appendChild(newField);
 }
 </script>

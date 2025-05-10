@@ -12,5 +12,6 @@
         @csrf
         {{-- تمرير المتغيّر $branches إلى الـPartial --}}
         @include('campaigns._form', ['branches' => $branches])
+
     </form>
 @endsection

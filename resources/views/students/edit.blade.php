@@ -8,6 +8,7 @@
         @csrf
         @method('PUT')
         @include('students._form', ['student' => $student])
+
         <div class="mt-4">
             <button class="btn btn-success">حفظ التعديلات</button>
             <a href="{{ route('students.index') }}" class="btn btn-secondary">إلغاء</a>

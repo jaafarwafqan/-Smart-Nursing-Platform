@@ -19,10 +19,11 @@
                             'journals' => $journals ?? [],
                             'selectedProfessors' => [],
                         ])
+
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
-@endsection 
+@endsection

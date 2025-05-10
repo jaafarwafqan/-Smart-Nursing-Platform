@@ -22,6 +22,7 @@
                             'selectedStudents' => [],
                             'selectedProfessors' => [],
                         ])
+
                     </form>
                 </div>
             </div>

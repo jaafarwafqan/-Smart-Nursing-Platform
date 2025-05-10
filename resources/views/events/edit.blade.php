@@ -6,5 +6,6 @@
         @csrf
         @method('PUT')
         @include('events._form', ['branches' => $branches])
+        <x-file-upload name="attachments[]" :current-files="$event->attachments->pluck('path')->toArray()" :delete-route="'events.attachment.destroy'" :model-id="$event->id" />
     </form>
 @endsection

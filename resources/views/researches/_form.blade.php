@@ -32,7 +32,7 @@
               :value="old('completion_percentage', $research->completion_percentage ?? 0)" min="0" max="100" step="5" />
 <div class="text-center" id="completion-value">0%</div>
 
-<x-form.input type="file" name="file" label='<i class="fas fa-file-alt text-muted ms-1"></i> ملف البحث' class="form-control"/>
+{{-- <x-form.input type="file" name="file" label='<i class="fas fa-file-alt text-muted ms-1"></i> ملف البحث' class="form-control"/> --}}
 
 <x-form.textarea name="abstract" label='<i class="fas fa-align-left text-muted ms-1"></i> ملخص البحث'>
     {{ old('abstract', $research->abstract ?? '') }}
@@ -61,7 +61,7 @@
             </button>
         </div>
     </div>
-    
+
     <div id="journals-list" class="mb-2">
         @if($research && $research->journals)
             @foreach($research->journals as $journal)
@@ -185,6 +185,7 @@
         </div>
     </div>
 </div>
+<x-file-upload name="attachments[]" />
 
 <x-button.primary>{{ $isEdit ? 'تحديث' : 'حفظ' }}</x-button.primary>
 
@@ -215,15 +216,15 @@ function getJournalTypeText(type) {
 function addJournal() {
     const type = document.getElementById('journal-type').value;
     const name = document.getElementById('journal-name').value.trim();
-    
+
     if (!name) {
         alert('الرجاء إدخال اسم المجلة');
         return;
     }
-    
+
     const journalsList = document.getElementById('journals-list');
     const index = journalsList.children.length;
-    
+
     const journalItem = document.createElement('div');
     journalItem.className = 'journal-item mb-2';
     journalItem.innerHTML = `
@@ -236,7 +237,7 @@ function addJournal() {
             </button>
         </div>
     `;
-    
+
     journalsList.appendChild(journalItem);
     document.getElementById('journal-name').value = '';
 }

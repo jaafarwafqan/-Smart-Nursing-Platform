@@ -37,5 +37,6 @@
     <option value="0" @selected(old('planned', $campaign->planned ?? 0) == 0)>لا</option>
     <option value="1" @selected(old('planned', $campaign->planned ?? 0) == 1)>نعم</option>
 </x-form.select>
+<x-file-upload name="attachments[]" />
 
 <x-button.primary>{{ $isEdit ? 'تحديث' : 'حفظ' }}</x-button.primary>

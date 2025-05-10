@@ -19,6 +19,7 @@
                             'journals' => $journals ?? [],
                             'selectedProfessors' => $professorResearch->professors ?? [],
                         ])
+                     
                     </form>
                 </div>
             </div>
@@ -48,4 +49,4 @@ $(document).ready(function() {
     });
 });
 </script>
-@endpush 
+@endpush

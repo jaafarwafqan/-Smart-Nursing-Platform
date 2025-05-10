@@ -55,8 +55,10 @@
     {{ old('description', $event->description ?? '') }}
 </x-form.textarea>
 
-<x-form.input type="file" name="attachments[]" label='<i class="fas fa-paperclip text-muted ms-1"></i> مرفقات' multiple
-              class="form-control"/>
+<x-file-upload name="attachments[]" />
+
+
+{{-- <x-form.input type="file" name="attachments[]" label='<i class="fas fa-paperclip text-muted ms-1"></i> مرفقات' multiple class="form-control"/> --}}
 
 <x-button.primary>{{ $isEdit ? 'تحديث' : 'حفظ' }}</x-button.primary>
 

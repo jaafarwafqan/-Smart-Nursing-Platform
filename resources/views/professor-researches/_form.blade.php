@@ -41,7 +41,7 @@
               :value="old('completion_percentage', $research->completion_percentage ?? 0)" min="0" max="100" step="5" />
 <div class="text-center" id="completion-value">0%</div>
 
-<x-form.input type="file" name="file" label='<i class="fas fa-file-alt text-muted ms-1"></i> ملف البحث' class="form-control"/>
+{{-- <x-form.input type="file" name="file" label='<i class="fas fa-file-alt text-muted ms-1"></i> ملف البحث' class="form-control"/> --}}
 
 <x-form.textarea name="abstract" label='<i class="fas fa-align-left text-muted ms-1"></i> ملخص البحث'>
     {{ old('abstract', $research->abstract ?? '') }}
@@ -51,10 +51,10 @@
 <small class="text-muted">افصل بين الكلمات بفاصلة</small>
 
 <div class="mb-3">
-    <label class="form-label"><i class="fas fa-book text-muted ms-1"></i> المجلات</label>
+    <label class="form-label" for="journal-type-0"><i class="fas fa-book text-muted ms-1"></i> المجلات</label>
     <div class="row mb-3">
         <div class="col-md-4">
-            <select class="form-select" id="journal-type">
+            <select class="form-select" id="journal-type-0">
                 <option value="local">محلي</option>
                 <option value="international">عالمي</option>
                 <option value="scopus">عالمي ضمن مستوعبات سكوبس</option>
@@ -62,7 +62,7 @@
             </select>
         </div>
         <div class="col-md-6">
-            <input type="text" class="form-control" id="journal-name" placeholder="اسم المجلة">
+            <input type="text" class="form-control" id="journal-name-0" placeholder="اسم المجلة">
         </div>
         <div class="col-md-2">
             <button type="button" class="btn btn-primary w-100" onclick="addJournal()">
@@ -70,7 +70,7 @@
             </button>
         </div>
     </div>
-    
+
     <div id="journals-list" class="mb-2">
         @if($research && $research->journals)
             @foreach($research->journals as $journal)
@@ -144,7 +144,7 @@
         </div>
     </div>
 </div>
-
+<x-file-upload name="attachments[]" />
 <x-button.primary>{{ $isEdit ? 'تحديث' : 'حفظ' }}</x-button.primary>
 
 @push('scripts')
@@ -172,17 +172,19 @@ function getJournalTypeText(type) {
 }
 
 function addJournal() {
-    const type = document.getElementById('journal-type').value;
-    const name = document.getElementById('journal-name').value.trim();
-    
+    const journalsList = document.getElementById('journals-list');
+    const index = journalsList.children.length;
+    const type = document.getElementById('journal-type-0').value;
+    const name = document.getElementById('journal-name-0').value.trim();
+
     if (!name) {
         alert('الرجاء إدخال اسم المجلة');
         return;
     }
-    
-    const journalsList = document.getElementById('journals-list');
-    const index = journalsList.children.length;
-    
+
+    const journalTypeId = `journal-type-${index}`;
+    const journalNameId = `journal-name-${index}`;
+
     const journalItem = document.createElement('div');
     journalItem.className = 'journal-item mb-2';
     journalItem.innerHTML = `
@@ -195,9 +197,9 @@ function addJournal() {
             </button>
         </div>
     `;
-    
+
     journalsList.appendChild(journalItem);
-    document.getElementById('journal-name').value = '';
+    document.getElementById('journal-name-0').value = '';
 }
 
 function removeJournal(button) {
@@ -211,4 +213,4 @@ function removeJournal(button) {
     });
 }
 </script>
-@endpush 
+@endpush
