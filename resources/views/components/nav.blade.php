@@ -52,22 +52,51 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('professors.index') }}"><i class="fas fa-chalkboard-teacher me-1"></i> الأساتذة</a></li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="reportsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-chart-bar me-1"></i>
                             التقارير
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="reportsDropdown">
                             <li>
                                 <a class="dropdown-item" href="{{ route('dashboard.index') }}">
+                                    <i class="fas fa-tachometer-alt me-1"></i>
                                     الاحصائيات العامة
                                 </a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="{{ route('dashboard.statistical') }}">
+                                    <i class="fas fa-chart-line me-1"></i>
                                     التقارير التفصيلية
                                 </a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="{{ route('dashboard.report') }}">
+                                    <i class="fas fa-file-alt me-1"></i>
                                     تقرير مخصص
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('dashboard.researches') }}">
+                                    <i class="fas fa-book me-1"></i>
+                                    تقارير البحوث
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('dashboard.students') }}">
+                                    <i class="fas fa-user-graduate me-1"></i>
+                                    تقارير الطلاب
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('dashboard.professors') }}">
+                                    <i class="fas fa-chalkboard-teacher me-1"></i>
+                                    تقارير الأساتذة
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('dashboard.journals') }}">
+                                    <i class="fas fa-newspaper me-1"></i>
+                                    تقارير الدوريات
                                 </a>
                             </li>
                         </ul>
@@ -82,7 +111,7 @@
                 @auth
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                            {{ Str::before(auth()->user()->name,' ') }}
+                            {{ \Illuminate\Support\Str::before(auth()->user()->name, ' ') }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="fas fa-user-cog me-1"></i> الحساب الشخصى</a></li>

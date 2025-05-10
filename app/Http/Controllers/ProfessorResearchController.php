@@ -7,6 +7,8 @@ use App\Models\Professor;
 use App\Models\Journal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Exports\ProfessorResearchesExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProfessorResearchController extends Controller
 {
@@ -122,7 +124,6 @@ class ProfessorResearchController extends Controller
             'journals' => 'nullable|array',
             'journals.*.name' => 'required|string',
             'journals.*.type' => 'required|string|in:local,international,scopus,clarivate',
-            'journals.*.id' => 'nullable|exists:journals,id',
         ]);
 
         // رفع الملف إذا تم اختياره
@@ -147,7 +148,7 @@ class ProfessorResearchController extends Controller
                 if (isset($journalData['id']) && !empty($journalData['id'])) {
                     $journalIds[] = $journalData['id'];
                 } else {
-                    $journal = Journal::firstOrCreate([
+                    $journal = \App\Models\Journal::firstOrCreate([
                         'name' => $journalData['name'],
                         'type' => $journalData['type'],
                     ]);
@@ -202,7 +203,8 @@ class ProfessorResearchController extends Controller
             'professor_roles' => 'required|array|min:1',
             'professor_roles.*' => 'required|string|max:255',
             'journals' => 'nullable|array',
-            'journals.*' => 'exists:journals,id'
+            'journals.*.name' => 'required|string',
+            'journals.*.type' => 'required|string|in:local,international,scopus,clarivate',
         ]);
 
         // رفع الملف إذا تم اختياره
@@ -225,8 +227,24 @@ class ProfessorResearchController extends Controller
             ]);
         }
 
-        // تحديث المجلات
-        $professorResearch->journals()->sync($request->journals ?? []);
+        // تحديث المجلات (مع إنشاء المجلات الجديدة إذا لم يوجد id)
+        $journalIds = [];
+        if ($request->filled('journals')) {
+            foreach ($request->input('journals', []) as $journalData) {
+                if (isset($journalData['id']) && !empty($journalData['id'])) {
+                    $journalIds[] = $journalData['id'];
+                } else {
+                    $journal = \App\Models\Journal::firstOrCreate([
+                        'name' => $journalData['name'],
+                        'type' => $journalData['type'],
+                    ]);
+                    $journalIds[] = $journal->id;
+                }
+            }
+            $professorResearch->journals()->sync($journalIds);
+        } else {
+            $professorResearch->journals()->sync([]);
+        }
 
         return redirect()->route('professor-researches.index')
             ->with('success', 'تم تحديث البحث بنجاح');
@@ -243,5 +261,10 @@ class ProfessorResearchController extends Controller
 
         return redirect()->route('professor-researches.index')
             ->with('success', 'تم حذف البحث بنجاح');
+    }
+
+    public function export()
+    {
+        return Excel::download(new ProfessorResearchesExport, 'professor-researches.xlsx');
     }
 }

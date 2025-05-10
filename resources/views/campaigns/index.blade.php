@@ -111,7 +111,7 @@
                                 <td>{{ optional($campaign->end_date)->format('Y-m-d') }}</td>
                                 <td>{{ $campaign->organizers }}</td>
                                 <td>{{ $campaign->participants_count }}</td>
-                                <td>{{ Str::limit($campaign->description, 30) }}</td>
+                                <td>{{ \Illuminate\Support\Str::limit($campaign->description, 30) }}</td>
                                 <td class="text-center">
                                     <a href="{{ route('campaigns.edit',$campaign) }}" class="btn btn-sm btn-primary">
                                         <i class="fas fa-edit"></i>

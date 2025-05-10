@@ -11,6 +11,9 @@ use App\Models\Research;
 use App\Models\User;
 use App\Models\Teacher;
 use App\Models\Student;
+use App\Models\Professor;
+use App\Models\ProfessorResearch;
+use App\Models\Journal;
 
 use App\Policies\EventPolicy;
 use App\Policies\CampaignPolicy;
@@ -18,10 +21,12 @@ use App\Policies\ResearchPolicy;
 use App\Policies\UserPolicy;
 use App\Policies\TeacherPolicy;
 use App\Policies\StudentPolicy;
+use App\Policies\ProfessorPolicy;
+use App\Policies\ProfessorResearchPolicy;
+use App\Policies\JournalPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
-
     protected $policies = [
         Campaign::class   => CampaignPolicy::class,
         Event::class      => EventPolicy::class,
@@ -29,8 +34,10 @@ class AuthServiceProvider extends ServiceProvider
         User::class       => UserPolicy::class,
         Teacher::class    => TeacherPolicy::class,
         Student::class    => StudentPolicy::class,
+        Professor::class  => ProfessorPolicy::class,
+        ProfessorResearch::class => ProfessorResearchPolicy::class,
+        Journal::class    => JournalPolicy::class,
     ];
-
 
     public function boot(): void
     {

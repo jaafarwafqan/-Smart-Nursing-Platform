@@ -22,12 +22,12 @@ class ResearchController extends Controller
 
     public function index(Request $request)
     {
-        $query = Research::query();
+        $query = Research::query()
+            ->searchByTitle($request->input('title'))
+            ->byPublicationStatus($request->input('publication_status'))
+            ->byResearchType($request->input('research_type'));
 
         // فلاتر البحث
-        if ($request->filled('title')) {
-            $query->where('title', 'like', '%' . $request->title . '%');
-        }
         if ($request->filled('professor')) {
             $query->whereHas('professors', function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->professor . '%');
@@ -37,9 +37,6 @@ class ResearchController extends Controller
             $query->whereHas('students', function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->student . '%');
             });
-        }
-        if ($request->filled('publication_status')) {
-            $query->where('publication_status', $request->publication_status);
         }
         if ($request->filled('journal_type')) {
             $query->whereHas('journals', function ($q) use ($request) {
@@ -76,7 +73,6 @@ class ResearchController extends Controller
     public function store(Request $request)
     {
         $isProfessorView = $request->query('view') === 'professors';
-        
         $rules = [
             'title' => 'required|string|max:255',
             'abstract' => 'nullable|string',
@@ -92,52 +88,18 @@ class ResearchController extends Controller
             'journals' => 'nullable|array',
             'journals.*' => 'exists:journals,id',
         ];
-
         if (!$isProfessorView) {
             $rules['students'] = 'required|array';
             $rules['students.*'] = 'exists:students,id';
             $rules['student_roles'] = 'required|array';
         }
-
         $validated = $request->validate($rules);
-
-        $research = Research::create([
-            'title' => $validated['title'],
-            'research_title' => $validated['title'],
-            'research_type' => $validated['research_type'],
-            'abstract' => $validated['abstract'],
-            'keywords' => $validated['keywords'],
-            'notes' => $validated['notes'],
-            'publication_status' => $validated['publication_status'],
-            'completion_percentage' => $validated['completion_percentage'],
-        ]);
-
-        if ($request->hasFile('file')) {
-            $path = $request->file('file')->store('research_files');
-            $research->update(['file_path' => $path]);
-        }
-
-        // ربط الطلاب (إذا لم نكن في واجهة الأساتذة)
-        if (!$isProfessorView) {
-            foreach ($validated['students'] as $index => $studentId) {
-                $research->students()->attach($studentId, [
-                    'role' => $validated['student_roles'][$index]
-                ]);
-            }
-        }
-
-        // ربط الأساتذة
-        foreach ($validated['professors'] as $index => $professorId) {
-            $research->professors()->attach($professorId, [
-                'role' => $validated['professor_roles'][$index]
-            ]);
-        }
-
-        // ربط المجلات
-        if (isset($validated['journals'])) {
-            $research->journals()->attach($validated['journals']);
-        }
-
+        $extra = [
+            'isProfessorView' => $isProfessorView,
+            'student_roles' => $validated['student_roles'] ?? [],
+            'professor_roles' => $validated['professor_roles'],
+        ];
+        $this->service->create($validated, $extra);
         return redirect()->route('researches.index', ['view' => $isProfessorView ? 'professors' : null])
             ->with('success', 'تم إنشاء البحث بنجاح');
     }
@@ -177,55 +139,18 @@ class ResearchController extends Controller
             'journals' => 'nullable|array',
             'journals.*' => 'exists:journals,id',
         ]);
-
-        $research->update([
-            'title' => $validated['title'],
-            'research_title' => $validated['title'],
-            'research_type' => $validated['research_type'],
-            'abstract' => $validated['abstract'],
-            'keywords' => $validated['keywords'],
-            'notes' => $validated['notes'],
-            'publication_status' => $validated['publication_status'],
-            'completion_percentage' => $validated['completion_percentage'],
-        ]);
-
-        if ($request->hasFile('file')) {
-            if ($research->file_path) {
-                Storage::delete($research->file_path);
-            }
-            $path = $request->file('file')->store('research_files');
-            $research->update(['file_path' => $path]);
-        }
-
-        // تحديث روابط الطلاب
-        $research->students()->detach();
-        foreach ($validated['students'] as $index => $studentId) {
-            $research->students()->attach($studentId, [
-                'role' => $validated['student_roles'][$index]
-            ]);
-        }
-
-        // تحديث روابط الأساتذة
-        $research->professors()->detach();
-        foreach ($validated['professors'] as $index => $professorId) {
-            $research->professors()->attach($professorId, [
-                'role' => $validated['professor_roles'][$index]
-            ]);
-        }
-
-        // تحديث روابط المجلات
-        $research->journals()->sync($validated['journals'] ?? []);
-
+        $extra = [
+            'student_roles' => $validated['student_roles'],
+            'professor_roles' => $validated['professor_roles'],
+        ];
+        $this->service->update($research, $validated, $extra);
         return redirect()->route('researches.index')
             ->with('success', 'تم تحديث البحث بنجاح');
     }
 
     public function destroy(Research $research)
     {
-        if ($research->file_path) {
-            Storage::delete($research->file_path);
-        }
-        $research->delete();
+        $this->service->delete($research);
         return redirect()->route('researches.index')
             ->with('success', 'تم حذف البحث بنجاح');
     }

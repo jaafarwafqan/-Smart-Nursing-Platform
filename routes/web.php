@@ -10,6 +10,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\ProfessorController;
 use App\Http\Controllers\ProfessorResearchController;
+use App\Http\Controllers\JournalController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +41,10 @@ Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'ind
 
 Route::get('/dashboard/statistical', [App\Http\Controllers\DashboardController::class, 'statistical'])->name('dashboard.statistical');
 Route::get('/dashboard/report', [App\Http\Controllers\DashboardController::class, 'report'])->name('dashboard.report');
+Route::get('/dashboard/researches', [DashboardController::class, 'researches'])->name('dashboard.researches');
+Route::get('/dashboard/students', [DashboardController::class, 'students'])->name('dashboard.students');
+Route::get('/dashboard/professors', [DashboardController::class, 'professors'])->name('dashboard.professors');
+Route::get('/dashboard/journals', [DashboardController::class, 'journals'])->name('dashboard.journals');
 
 /* 🔒 Routes محمية */
 Route::middleware('auth')->group(function () {
@@ -107,5 +112,14 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['auth'])->group(function () {
         Route::resource('professor-researches', ProfessorResearchController::class);
     });
+
+    // مسارات المجلات
+    Route::middleware(['auth'])->group(function () {
+        Route::resource('journals', JournalController::class);
+    });
+
+    Route::get('/professors/export', [ProfessorController::class, 'export'])->name('professors.export');
+    Route::get('/professor-researches/export', [ProfessorResearchController::class, 'export'])->name('professor-researches.export');
+    Route::get('/journals/export', [JournalController::class, 'export'])->name('journals.export');
 
 });

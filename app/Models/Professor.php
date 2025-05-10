@@ -33,4 +33,26 @@ class Professor extends Model
             ->withPivot('role')
             ->withTimestamps();
     }
+
+    // Scopes
+    public function scopeByAcademicRank($query, $rank)
+    {
+        return $query->when($rank, fn($q) => $q->where('academic_rank', $rank));
+    }
+    public function scopeByGender($query, $gender)
+    {
+        return $query->when($gender, fn($q) => $q->where('gender', $gender));
+    }
+    public function scopeByCollege($query, $college)
+    {
+        return $query->when($college, fn($q) => $q->where('college', $college));
+    }
+    public function scopeByDepartment($query, $department)
+    {
+        return $query->when($department, fn($q) => $q->where('department', $department));
+    }
+    public function scopeSearchByName($query, $name)
+    {
+        return $query->when($name, fn($q) => $q->where('name', 'like', "%$name%"));
+    }
 } 

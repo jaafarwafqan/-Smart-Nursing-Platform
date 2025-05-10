@@ -10,10 +10,17 @@ use Illuminate\Support\Facades\Redirect;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\StudentsImport;
 use Maatwebsite\Excel\Validators\ValidationException;
+use App\Services\StudentService;
 
 
 class StudentController extends Controller
 {
+    private StudentService $service;
+    public function __construct(StudentService $service)
+    {
+        $this->service = $service;
+    }
+
     public function index(Request $request)
     {
         $allowedSorts = ['id', 'name', 'gender', 'birthdate', 'university_number', 'study_type', 'study_year', 'phone', 'email'];
@@ -28,9 +35,9 @@ class StudentController extends Controller
         }
 
         $students = Student::query()
-            ->when($request->input('study_type'), fn($q, $type) => $q->where('study_type', $type))
-            ->when($request->input('search'), fn($q, $s) => $q->where('name', 'like', "%$s%"))
-            ->when($request->input('gender'), fn($q, $g) => $q->where('gender', $g))
+            ->byStudyType($request->input('study_type'))
+            ->searchByName($request->input('search'))
+            ->byGender($request->input('gender'))
             ->orderBy($sort, $direction)
             ->paginate(20);
 
@@ -63,7 +70,7 @@ class StudentController extends Controller
             'email' => 'nullable|email',
             'notes' => 'nullable|string',
         ]);
-        Student::create($data);
+        $this->service->create($data);
         return redirect()->route('students.index')->with('success', 'تمت إضافة الطالب بنجاح');
     }
 
@@ -86,13 +93,13 @@ class StudentController extends Controller
             'email' => 'nullable|email',
             'notes' => 'nullable|string',
         ]);
-        $student->update($data);
+        $this->service->update($student, $data);
         return redirect()->route('students.index')->with('success', 'تم تحديث بيانات الطالب');
     }
 
     public function destroy(Student $student)
     {
-        $student->delete();
+        $this->service->delete($student);
         return redirect()->route('students.index')->with('success', 'تم حذف الطالب');
     }
 

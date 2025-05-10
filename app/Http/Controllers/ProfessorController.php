@@ -2,15 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\ProfessorServiceInterface;
 use App\Imports\ProfessorsImport;
 use App\Models\Professor;
 use App\Models\Research;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Validators\ValidationException;
+use App\Exports\ProfessorsExport;
 
 class ProfessorController extends Controller
 {
+    public function __construct(private ProfessorServiceInterface $service)
+    {
+        $this->authorizeResource(Professor::class, 'professor');
+    }
+
     public function index(Request $request)
     {
         $allowedSorts = ['id', 'name', 'gender', 'academic_rank', 'college', 'department', 'phone', 'email'];
@@ -46,19 +53,30 @@ class ProfessorController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'name' => 'required',
-            'gender' => 'required',
-            'academic_rank' => 'nullable|string',
-            'college' => 'nullable|string',
-            'department' => 'nullable|string',
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'gender' => 'required|in:ذكر,انثى',
+            'academic_rank' => 'required|string|max:255',
+            'college' => 'required|string|max:255',
+            'department' => 'required|string|max:255',
             'research_interests' => 'nullable|string',
-            'phone' => 'nullable|string',
-            'email' => 'nullable|email',
+            'phone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
             'notes' => 'nullable|string',
+            'attachments' => 'nullable|array',
+            'attachments.*' => 'file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
         ]);
-        Professor::create($data);
-        return redirect()->route('professors.index')->with('success', 'تمت إضافة الأستاذ بنجاح');
+
+        $professor = $this->service->create($validated);
+
+        return redirect()->route('professors.index')
+            ->with('success', 'تم إضافة الأستاذ بنجاح');
+    }
+
+    public function show(Professor $professor)
+    {
+        $professor->load(['researches', 'professorResearches']);
+        return view('professors.show', compact('professor'));
     }
 
     public function edit(Professor $professor)
@@ -68,25 +86,32 @@ class ProfessorController extends Controller
 
     public function update(Request $request, Professor $professor)
     {
-        $data = $request->validate([
-            'name' => 'required',
-            'gender' => 'required',
-            'academic_rank' => 'nullable|string',
-            'college' => 'nullable|string',
-            'department' => 'nullable|string',
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'gender' => 'required|in:ذكر,انثى',
+            'academic_rank' => 'required|string|max:255',
+            'college' => 'required|string|max:255',
+            'department' => 'required|string|max:255',
             'research_interests' => 'nullable|string',
-            'phone' => 'nullable|string',
-            'email' => 'nullable|email',
+            'phone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
             'notes' => 'nullable|string',
+            'attachments' => 'nullable|array',
+            'attachments.*' => 'file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
         ]);
-        $professor->update($data);
-        return redirect()->route('professors.index')->with('success', 'تم تحديث بيانات الأستاذ');
+
+        $this->service->update($professor, $validated);
+
+        return redirect()->route('professors.index')
+            ->with('success', 'تم تحديث بيانات الأستاذ بنجاح');
     }
 
     public function destroy(Professor $professor)
     {
-        $professor->delete();
-        return redirect()->route('professors.index')->with('success', 'تم حذف الأستاذ');
+        $this->service->delete($professor);
+
+        return redirect()->route('professors.index')
+            ->with('success', 'تم حذف الأستاذ بنجاح');
     }
 
     // استيراد الأساتذة من Excel (واجهة رفع الملف)
@@ -114,7 +139,7 @@ class ProfessorController extends Controller
     }
 
     // تصدير الأساتذة إلى Excel
-    public function export(Request $request)
+    public function export()
     {
         // return Excel::download(new ProfessorsExport, 'professors.xlsx');
         return response()->json(['message' => 'تم التصدير (نموذج)']);

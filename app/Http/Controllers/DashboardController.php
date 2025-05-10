@@ -165,4 +165,154 @@ class DashboardController extends Controller
 
         return $statistics;
     }
+
+    public function researches()
+    {
+        $totalResearches = \App\Models\Research::count();
+        $completedResearches = \App\Models\Research::where('completion_percentage', 100)->count();
+        $inProgressResearches = \App\Models\Research::where('completion_percentage', '<', 100)->count();
+        $publishedResearches = \App\Models\Research::where('publication_status', 'published')->count();
+
+        $researchTypes = \App\Models\Research::select('research_type', DB::raw('count(*) as count'))
+            ->groupBy('research_type')
+            ->get();
+
+        $publicationStatuses = \App\Models\Research::select('publication_status', DB::raw('count(*) as count'))
+            ->groupBy('publication_status')
+            ->get();
+
+        $latestResearches = \App\Models\Research::with(['professors', 'students'])
+            ->latest()
+            ->take(10)
+            ->get();
+
+        return view('dashboard.researches', compact(
+            'totalResearches',
+            'completedResearches',
+            'inProgressResearches',
+            'publishedResearches',
+            'researchTypes',
+            'publicationStatuses',
+            'latestResearches'
+        ));
+    }
+
+    public function students()
+    {
+        $totalStudents = \App\Models\Student::count();
+        $researchStudents = \App\Models\Student::whereHas('researches')->count();
+        $averageResearchesPerStudent = \App\Models\Student::withCount('researches')
+            ->get()
+            ->avg('researches_count');
+        $excellentStudents = \App\Models\Student::whereHas('researches', function($q) {
+            $q->where('completion_percentage', '>=', 90);
+        })->count();
+
+        $collegeDistribution = \App\Models\Student::select('study_type', DB::raw('count(*) as count'))
+            ->groupBy('study_type')
+            ->get();
+
+        $levelDistribution = \App\Models\Student::select('study_year', DB::raw('count(*) as count'))
+            ->whereNotNull('study_year')
+            ->groupBy('study_year')
+            ->get();
+
+        $excellentStudentsList = \App\Models\Student::withCount('researches')
+            ->whereHas('researches', function($q) {
+                $q->where('completion_percentage', '>=', 90);
+            })
+            ->take(10)
+            ->get();
+
+        return view('dashboard.students', compact(
+            'totalStudents',
+            'researchStudents',
+            'averageResearchesPerStudent',
+            'excellentStudents',
+            'collegeDistribution',
+            'levelDistribution',
+            'excellentStudentsList'
+        ));
+    }
+
+    public function professors()
+    {
+        $totalProfessors = \App\Models\Professor::count();
+        $researchProfessors = \App\Models\Professor::whereHas('researches')->count();
+        $averageResearchesPerProfessor = \App\Models\Professor::withCount('researches')
+            ->get()
+            ->avg('researches_count');
+        $excellentProfessors = \App\Models\Professor::whereHas('researches', function($q) {
+            $q->where('completion_percentage', '>=', 90);
+        })->count();
+
+        $academicRankDistribution = \App\Models\Professor::select('academic_rank', DB::raw('count(*) as count'))
+            ->whereNotNull('academic_rank')
+            ->groupBy('academic_rank')
+            ->get();
+
+        $collegeDistribution = \App\Models\Professor::select('college', DB::raw('count(*) as count'))
+            ->whereNotNull('college')
+            ->groupBy('college')
+            ->get();
+
+        $excellentProfessorsList = \App\Models\Professor::withCount(['researches', 'researches as published_researches_count' => function($q) {
+            $q->where('publication_status', 'published');
+        }])
+        ->whereHas('researches', function($q) {
+            $q->where('completion_percentage', '>=', 90);
+        })
+        ->take(10)
+        ->get();
+
+        return view('dashboard.professors', compact(
+            'totalProfessors',
+            'researchProfessors',
+            'averageResearchesPerProfessor',
+            'excellentProfessors',
+            'academicRankDistribution',
+            'collegeDistribution',
+            'excellentProfessorsList'
+        ));
+    }
+
+    public function journals()
+    {
+        $totalJournals = \App\Models\Journal::count();
+        $internationalJournals = \App\Models\Journal::where('type', 'international')->count();
+        $scopusIndexed = \App\Models\Journal::where('is_scopus_indexed', true)->count();
+        $clarivateIndexed = \App\Models\Journal::where('is_clarivate_indexed', true)->count();
+
+        $journalTypeDistribution = \App\Models\Journal::select('type', DB::raw('count(*) as count'))
+            ->groupBy('type')
+            ->get();
+
+        $publishedResearchesDistribution = \App\Models\Journal::withCount('researches')
+            ->orderByDesc('researches_count')
+            ->take(10)
+            ->get()
+            ->map(function($journal) {
+                return [
+                    'journal' => $journal->name,
+                    'count' => $journal->researches_count
+                ];
+            });
+
+        $excellentJournalsList = \App\Models\Journal::withCount('researches')
+            ->whereHas('researches', function($q) {
+                $q->where('completion_percentage', '>=', 90);
+            })
+            ->take(10)
+            ->get();
+
+        return view('dashboard.journals', compact(
+            'totalJournals',
+            'internationalJournals',
+            'scopusIndexed',
+            'clarivateIndexed',
+            'journalTypeDistribution',
+            'publishedResearchesDistribution',
+            'excellentJournalsList'
+        ));
+    }
 }

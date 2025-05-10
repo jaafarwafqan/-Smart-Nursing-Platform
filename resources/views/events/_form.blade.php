@@ -15,14 +15,26 @@
 <x-form.input name="event_title" label='<i class="fas fa-heading text-muted ms-1"></i> عنوان الفعالية'
               :value="old('event_title', $event->event_title ?? '')" />
 
-<x-form.select  name="event_type"   label='<i class="fas fa-list text-muted ms-1"></i> نوع الفعالية'>
-    @foreach($eventTypes as $type)
-        <option value="{{ $type }}"
-            @selected(old('event_type', $event->event_type ?? '') === $type)>
-            {{ $type }}
-        </option>
-    @endforeach
+<x-form.select name="planned" label='<i class="fas fa-check text-muted ms-1"></i> هل الفعالية مخطط لها؟' id="planned_select">
+    <option value="1" @selected(old('planned', $event->planned ?? 1) == 1)>نعم</option>
+    <option value="0" @selected(old('planned', $event->planned ?? 1) == 0)>لا</option>
 </x-form.select>
+
+<div id="event_type_container">
+    <x-form.select name="event_type" label='<i class="fas fa-list text-muted ms-1"></i> نوع الفعالية'>
+        @foreach($eventTypes as $type)
+            <option value="{{ $type }}"
+                @selected(old('event_type', $event->event_type ?? '') === $type)>
+                {{ $type }}
+            </option>
+        @endforeach
+    </x-form.select>
+</div>
+
+<div id="custom_event_type_container" style="display: none;">
+    <x-form.input name="event_type" label='<i class="fas fa-list text-muted ms-1"></i> نوع الفعالية'
+                  :value="old('event_type', $event->event_type ?? '')" />
+</div>
 
 <x-form.select name="activity_classification" label='<i class="fas fa-tags text-muted ms-1"></i> تصنيف النشاط'>
     @foreach($activityClassifications as $classification)
@@ -47,3 +59,20 @@
               class="form-control"/>
 
 <x-button.primary>{{ $isEdit ? 'تحديث' : 'حفظ' }}</x-button.primary>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const plannedSelect = document.getElementById('planned_select');
+    const eventTypeContainer = document.getElementById('event_type_container');
+    const customEventTypeContainer = document.getElementById('custom_event_type_container');
+
+    function toggleEventTypeField() {
+        const isPlanned = plannedSelect.value === '1';
+        eventTypeContainer.style.display = isPlanned ? 'block' : 'none';
+        customEventTypeContainer.style.display = isPlanned ? 'none' : 'block';
+    }
+
+    plannedSelect.addEventListener('change', toggleEventTypeField);
+    toggleEventTypeField(); // Initial state
+});
+</script>

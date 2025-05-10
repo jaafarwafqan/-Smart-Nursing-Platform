@@ -74,4 +74,18 @@ class ProfessorResearch extends Model
             self::TYPE_QUANTITATIVE => 'كمي',
         ][$this->research_type] ?? $this->research_type;
     }
+
+    // Scopes
+    public function scopeByPublicationStatus($query, $status)
+    {
+        return $query->when($status, fn($q) => $q->where('publication_status', $status));
+    }
+    public function scopeByResearchType($query, $type)
+    {
+        return $query->when($type, fn($q) => $q->where('research_type', $type));
+    }
+    public function scopeSearchByTitle($query, $title)
+    {
+        return $query->when($title, fn($q) => $q->where('title', 'like', "%$title%"));
+    }
 } 

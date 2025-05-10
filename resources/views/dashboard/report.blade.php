@@ -2,6 +2,7 @@
 @extends('layouts.app')
 @section('title', 'التقارير الجدولية')
 
+@php use Illuminate\Support\Str; @endphp
 
 @section('content')
 <div class="container-fluid py-4">
