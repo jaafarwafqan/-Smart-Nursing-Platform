@@ -36,52 +36,50 @@ Route::view('/', 'home')->name('home');
 Route::view('/about', 'about')->name('about');
 
 Route::view('/login', 'auth.login')->name('login');
-Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'index'])
-    ->name('dashboard.index');
 
-Route::get('/dashboard/statistical', [App\Http\Controllers\DashboardController::class, 'statistical'])->name('dashboard.statistical');
-Route::get('/dashboard/report', [App\Http\Controllers\DashboardController::class, 'report'])->name('dashboard.report');
-Route::get('/dashboard/researches', [DashboardController::class, 'researches'])->name('dashboard.researches');
-Route::get('/dashboard/students', [DashboardController::class, 'students'])->name('dashboard.students');
-Route::get('/dashboard/professors', [DashboardController::class, 'professors'])->name('dashboard.professors');
-Route::get('/dashboard/journals', [DashboardController::class, 'journals'])->name('dashboard.journals');
+// مسارات لوحة التحكم
+Route::middleware(['auth', 'user.type:admin,supervisor'])->prefix('dashboard')->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
+    Route::get('/statistical', [DashboardController::class, 'statistical'])->name('dashboard.statistical');
+    Route::get('/report', [DashboardController::class, 'report'])->name('dashboard.report');
+    Route::get('/researches', [DashboardController::class, 'researches'])->name('dashboard.researches');
+    Route::get('/students', [DashboardController::class, 'students'])->name('dashboard.students');
+    Route::get('/professors', [DashboardController::class, 'professors'])->name('dashboard.professors');
+    Route::get('/journals', [DashboardController::class, 'journals'])->name('dashboard.journals');
+});
 
-/* 🔒 Routes محمية */
-Route::middleware('auth')->group(function () {
+/* 🔒 Routes محمية */
+Route::middleware(['auth'])->group(function () {
+    // مسارات المستخدمين (للمدير فقط)
+    Route::middleware(['user.type:admin', 'permission:manage_users'])->group(function () {
+        Route::resource('users', UserController::class);
+        Route::get('users/{user}/attachments', [UserController::class, 'attachments'])->name('users.attachments');
+        Route::get('users/export', [UserController::class, 'export'])->name('users.export');
+    });
 
-    Route::middleware('permission:manage_events')->resource('events', EventController::class);
-    Route::get('events/{event}/attachments', [EventController::class, 'attachments'])
-        ->name('events.attachments');
-    // ✅ مسار التصدير
-    Route::get('events/export', [EventController::class, 'export'])
-        ->name('events.export');
+    // مسارات الفعاليات
+    Route::middleware(['permission:manage_events'])->group(function () {
+        Route::resource('events', EventController::class);
+        Route::get('events/{event}/attachments', [EventController::class, 'attachments'])->name('events.attachments');
+        Route::get('events/export', [EventController::class, 'export'])->name('events.export');
+    });
 
-    Route::middleware('permission:manage_campaigns')->resource('campaigns', CampaignController::class);
-    Route::get('campaigns/{campaign}/attachments', [CampaignController::class, 'attachments'])
-        ->name('campaigns.attachments');
-    // ✅ مسار التصدير
-    Route::get('campaigns/export', [CampaignController::class, 'export'])
-        ->name('campaigns.export');
+    // مسارات الحملات
+    Route::middleware(['permission:manage_campaigns'])->group(function () {
+        Route::resource('campaigns', CampaignController::class);
+        Route::get('campaigns/{campaign}/attachments', [CampaignController::class, 'attachments'])->name('campaigns.attachments');
+        Route::get('campaigns/export', [CampaignController::class, 'export'])->name('campaigns.export');
+    });
 
-
-    Route::middleware('permission:manage_researches')->resource('researches', ResearchController::class);
-    Route::get('researches/{research}/download', [ResearchController::class, 'download'])->name('researches.download');
-    Route::get('researches/export', [ResearchController::class, 'export'])->name('researches.export');
-
-    Route::middleware('permission:manage_users')->resource('users', UserController::class);
-    Route::get('users/{user}/attachments', [UserController::class, 'attachments'])
-        ->name('users.attachments');
-
-    Route::get('/profile', [UserController::class, 'profile'])->name('profile.edit');
-    Route::put('/profile', [UserController::class, 'updateProfile'])->name('profile.update');
-    Route::put('/profile/pass', [UserController::class, 'changePassword'])->name('profile.changePassword');
-
-    // ✅ مسار التصدير
-    Route::get('users/export', [UserController::class, 'export'])
-        ->name('users.export');
+    // مسارات الأبحاث
+    Route::middleware(['permission:manage_researches'])->group(function () {
+        Route::resource('researches', ResearchController::class);
+        Route::get('researches/{research}/download', [ResearchController::class, 'download'])->name('researches.download');
+        Route::get('researches/export', [ResearchController::class, 'export'])->name('researches.export');
+    });
 
     // مسارات الطلاب
-    Route::prefix('students')->middleware(['auth'])->group(function () {
+    Route::prefix('students')->middleware(['permission:manage_students'])->group(function () {
         Route::get('/', [StudentController::class, 'index'])->name('students.index');
         Route::get('/create', [StudentController::class, 'create'])->name('students.create');
         Route::post('/', [StudentController::class, 'store'])->name('students.store');
@@ -95,7 +93,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // مسارات الأساتذة
-    Route::prefix('professors')->middleware(['auth'])->group(function () {
+    Route::prefix('professors')->middleware(['permission:manage_professors'])->group(function () {
         Route::get('/', [ProfessorController::class, 'index'])->name('professors.index');
         Route::get('/create', [ProfessorController::class, 'create'])->name('professors.create');
         Route::post('/', [ProfessorController::class, 'store'])->name('professors.store');
@@ -109,17 +107,19 @@ Route::middleware('auth')->group(function () {
     });
 
     // مسارات بحوث الأساتذة
-    Route::middleware(['auth'])->group(function () {
+    Route::middleware(['permission:manage_researches'])->group(function () {
         Route::resource('professor-researches', ProfessorResearchController::class);
+        Route::get('/professor-researches/export', [ProfessorResearchController::class, 'export'])->name('professor-researches.export');
     });
 
     // مسارات المجلات
-    Route::middleware(['auth'])->group(function () {
+    Route::middleware(['permission:manage_journals'])->group(function () {
         Route::resource('journals', JournalController::class);
+        Route::get('/journals/export', [JournalController::class, 'export'])->name('journals.export');
     });
 
-    Route::get('/professors/export', [ProfessorController::class, 'export'])->name('professors.export');
-    Route::get('/professor-researches/export', [ProfessorResearchController::class, 'export'])->name('professor-researches.export');
-    Route::get('/journals/export', [JournalController::class, 'export'])->name('journals.export');
-
+    // مسارات الملف الشخصي
+    Route::get('/profile', [UserController::class, 'profile'])->name('profile.edit');
+    Route::put('/profile', [UserController::class, 'updateProfile'])->name('profile.update');
+    Route::put('/profile/pass', [UserController::class, 'changePassword'])->name('profile.changePassword');
 });

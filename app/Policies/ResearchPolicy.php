@@ -4,12 +4,44 @@ namespace App\Policies;
 
 use App\Models\User;
 use App\Models\Research;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ResearchPolicy
 {
-    public function viewAny(User $u): bool             { return $u->can('manage_researches'); }
-    public function view(User $u, Research $r): bool   { return $this->viewAny($u); }
-    public function create(User $u): bool             { return $this->viewAny($u); }
-    public function update(User $u, Research $r): bool { return $this->viewAny($u); }
-    public function delete(User $u, Research $r): bool { return $this->viewAny($u); }
+    use HandlesAuthorization;
+
+    public function viewAny(User $user): bool
+    {
+        return $user->hasPermissionTo('view_researches');
+    }
+
+    public function view(User $user, Research $research): bool
+    {
+        return $user->hasPermissionTo('view_researches');
+    }
+
+    public function create(User $user): bool
+    {
+        return $user->hasPermissionTo('create_researches');
+    }
+
+    public function update(User $user, Research $research): bool
+    {
+        return $user->hasPermissionTo('edit_researches');
+    }
+
+    public function delete(User $user, Research $research): bool
+    {
+        return $user->hasPermissionTo('delete_researches');
+    }
+
+    public function restore(User $user, Research $research): bool
+    {
+        return $user->hasPermissionTo('manage_researches');
+    }
+
+    public function forceDelete(User $user, Research $research): bool
+    {
+        return $user->hasPermissionTo('manage_researches');
+    }
 }

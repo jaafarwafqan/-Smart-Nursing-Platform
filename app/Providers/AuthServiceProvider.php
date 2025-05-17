@@ -28,10 +28,10 @@ use App\Policies\JournalPolicy;
 class AuthServiceProvider extends ServiceProvider
 {
     protected $policies = [
+        User::class => UserPolicy::class,
+        Research::class => ResearchPolicy::class,
         Campaign::class   => CampaignPolicy::class,
         Event::class      => EventPolicy::class,
-        Research::class   => ResearchPolicy::class,
-        User::class       => UserPolicy::class,
         Teacher::class    => TeacherPolicy::class,
         Student::class    => StudentPolicy::class,
         Professor::class  => ProfessorPolicy::class,

@@ -25,9 +25,11 @@
             <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                 <h3 class="h5 mb-0">إدارة المستخدمين</h3>
                 <div class="d-flex gap-2">
-                    <a href="{{ route('users.create') }}" class="btn btn-sm btn-primary">
-                        <i class="fas fa-plus"></i> إضافة مستخدم
-                    </a>
+                    <x-permission-gate permission="create_users">
+                        <a href="{{ route('users.create') }}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-plus"></i> إضافة مستخدم جديد
+                        </a>
+                    </x-permission-gate>
                     <a href="{{ route('users.export') }}" class="btn btn-sm btn-success">
                         <i class="fas fa-file-excel"></i> تصدير Excel
                     </a>
@@ -127,14 +129,15 @@
                                 <td class="text-center">
                                     @if($user->email !== 'jaafar1@jaafar1.com')
                                         @can('update',$user)
-
-                                            <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-primary" title="تعديل">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
+                                            <x-permission-gate permission="edit_users">
+                                                <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-primary" title="تعديل">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            </x-permission-gate>
                                         @endcan
                                         @can('delete',$user)
                                             @if($user->id!==auth()->id())
-
+                                                <x-permission-gate permission="delete_users">
                                                     <form action="{{ route('users.destroy',$user) }}" method="POST" style="display:inline-block">
                                                         @csrf
                                                         @method('DELETE')
@@ -142,6 +145,7 @@
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </form>
+                                                </x-permission-gate>
                                             @endif
                                         @endcan
                                     @else

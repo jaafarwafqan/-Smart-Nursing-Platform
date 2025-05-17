@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasUserType;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
@@ -9,7 +10,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasRoles, Notifiable, SoftDeletes;
+    use HasRoles, Notifiable, SoftDeletes, HasUserType;
 
     /** الحقول القابلة للتعبئة */
     protected $fillable = [

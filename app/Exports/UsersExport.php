@@ -17,7 +17,7 @@ class UsersExport implements FromCollection, WithHeadings, WithMapping, ShouldAu
      */
     public function collection()
     {
-        return User::with('permissions')->get();
+        return User::with('permissions', 'branch')->get();
     }
 
     /**
@@ -45,11 +45,11 @@ class UsersExport implements FromCollection, WithHeadings, WithMapping, ShouldAu
         return [
             $user->name,
             $user->email,
-            $user->branch,
+            $user->branch?->name ?? 'غير محدد',
             $this->getUserType($user->type),
             $user->permissions->pluck('name')->implode(', '),
-            $user->created_at->format('Y-m-d H:i:s'),
-            $user->updated_at->format('Y-m-d H:i:s'),
+            $user->created_at?->format('Y-m-d H:i:s') ?? 'N/A',
+            $user->updated_at?->format('Y-m-d H:i:s') ?? 'N/A',
         ];
     }
 
@@ -69,10 +69,11 @@ class UsersExport implements FromCollection, WithHeadings, WithMapping, ShouldAu
     private function getUserType($type): string
     {
         return match ($type) {
-            ' => 'مدير النظام',
-            'faculty' => 'تدريسي',
-            'student' => 'طالب',
-            default => $type,
+            'admin'    => 'مدير النظام',
+            'faculty'  => 'تدريسي',
+            'student'  => 'طالب',
+            'employee' => 'موظف',
+            default    => 'غير معروف',
         };
     }
 }
