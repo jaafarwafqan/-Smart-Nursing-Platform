@@ -60,9 +60,11 @@
             <label for="type">نوع المستخدم</label>
             <select class="form-control @error('type') is-invalid @enderror" id="type" name="type" required>
                 <option value="">اختر نوع المستخدم</option>
-                <x-user-type-gate types="admin">
-                    <option value="admin" {{ old('type', $user->type ?? null) === 'admin' ? 'selected' : '' }}>مدير</option>
-                </x-user-type-gate>
+                @auth
+                    @if(auth()->user()->type === 'admin')
+                        <option value="admin" {{ old('type', $user->type ?? null) === 'admin' ? 'selected' : '' }}>مدير</option>
+                    @endif
+                @endauth
                 <option value="supervisor" {{ old('type', $user->type ?? null) === 'supervisor' ? 'selected' : '' }}>مشرف</option>
                 <option value="user" {{ old('type', $user->type ?? null) === 'user' ? 'selected' : '' }}>مستخدم</option>
             </select>
